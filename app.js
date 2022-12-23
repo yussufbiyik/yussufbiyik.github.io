@@ -1,4 +1,3 @@
-
 const maxMoveAmount = 5;
 Number.prototype.mapNumbers = function (in_min, in_max, out_min, out_max) {
     return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -159,7 +158,7 @@ const createDetailedGallery = (gallery) => {
         </div>\n<div id="more-content">\n`
     // gallery.contents.shift();
     gallery.contents.forEach((content, index) => {
-        result += `<div class="mini-content"><div onclick="changeHighlight(this)" data-index="${index}" data-parent-name="${gallery.name}" style="background:url('${content.background}') no-repeat center;background-size: cover;width:100%;height:100%;"></div></div>\n`
+        result += `<div class="mini-content"><div onclick="changeHighlight(this)" data-index="${index}" data-parent-name="${gallery.name}" style="background:url('${content.background.replace('assets/', 'assets/proxy/')}') no-repeat center;background-size: cover;width:100%;height:100%;"></div></div>\n`
     })
     result += "</div>"
     return result;
@@ -170,7 +169,7 @@ const createGallery = (gallery) => {
         </div>\n<div id="more-content">\n`
     // gallery.contents.shift();
     gallery.contents.forEach(content => {
-        result += `<div class="mini-content"><div onclick="changeHighlight(this)" data-background="${content}" class="highlight-background" style="background-image:url('${content}')"></div></div>\n`
+        result += `<div class="mini-content"><div onclick="changeHighlight(this)" data-background="${content.replace('assets/', 'assets/proxy/')}" class="highlight-background" style="background-image:url('${content}')"></div></div>\n`
     })
     result += "</div>"
     return result;
@@ -179,7 +178,7 @@ const createGallery = (gallery) => {
 function changeHighlight(element) {
     const galleryHighlight = document.getElementById('highlight-background');
     if(element.dataset.background != undefined) {
-        galleryHighlight.style.backgroundImage = `url('${element.dataset.background}')`;
+        galleryHighlight.style.backgroundImage = `url('${element.dataset.background.replace('assets/proxy','assets/')}')`;
     }else {
         const selectedPage = pages.find(page => page.name === element.dataset.parentName);
         const selectedIndex = element.dataset.index;

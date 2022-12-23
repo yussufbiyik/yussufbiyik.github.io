@@ -44,11 +44,6 @@
                 baseFrequency='.47' 
                 numOctaves='2' 
                 result="turbulence">
-                <animate
-                    attributeName="numOctaves"
-                    values="2;8;2"
-                    dur="3s"
-                    repeatCount="indefinite" />
             </feTurbulence>
             <feDisplacementMap
                 in2="turbulence"
@@ -63,13 +58,6 @@
                     dur="6s"
                     repeatCount="indefinite" />
             </feDisplacementMap>
-            <feGaussianBlur in="fractal" stdDeviation=".5">
-                <animate
-                    attributeName="stdDeviation"
-                    values=".2;.5;.2"
-                    dur="3s"
-                    repeatCount="indefinite" />
-            </feGaussianBlur>
         </filter>
     </svg>
 
