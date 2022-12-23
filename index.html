@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="fluiditype.css">
+</head>
+<body onload="loadContent('detailed-gallery', 'projelerim')">
+    <div class="container">
+        <div class="topbar">
+            <a target="_blank" href="https://github.com/yussufbiyik">GitHub</a>
+            <a target="_blank" href="https://codepen.io/yusufbiyik">CodePen</a>
+            <a href="mailto:yussuf.jpeg@gmail.com">yussuf.jpeg@gmail.com</a>
+        </div>
+        <div class="content border-no-hover">
+            <div id="bio" class="left-content">
+                <div id="bio-text">
+                    <h1>Yusuf Bıyık</h1>
+                    <p>Yazılıma 8.sınıfta HTML, CSS ve PHP öğrenerek başladım ve o günden beri kendim, çevrem ve müşterilerim içim kendimi aşan projeler yapıp gelişiyorum.</p>    
+                </div>
+                <div class="link-list">
+                    <a onclick="loadContent('detailed-gallery', 'projelerim')" href="#content">Projelerim</a>
+                    <a onclick="loadContent('custom', 'yetkinliklerim')" href="#content">Yetkinliklerim</a>
+                    <a onclick="loadContent('gallery', 'pixel-art')" href="#content">Pixel Art</a>
+                    <a onclick="loadContent('gallery', '3d-modelleme-renderlar')" href="#content">3D Modelleme/Renderlar</a>
+                    <small>En iyi deneyim için masaüstünde ziyaret edin.</small>
+                </div>
+            </div>
+            <div id="content" class="right-content moveable">
+                <h2 id="content-heading"></h2>
+                <div id="content-details" class="">
+                </div>
+            </div>
+        </div>
+        <div class="bottombar"></div>
+    </div>
+    <svg style="display: none;">
+        <filter id='noiseFilter'>
+            <feTurbulence 
+                type='turbulence' 
+                baseFrequency='.47' 
+                numOctaves='2' 
+                result="turbulence">
+                <animate
+                    attributeName="numOctaves"
+                    values="2;8;2"
+                    dur="3s"
+                    repeatCount="indefinite" />
+            </feTurbulence>
+            <feDisplacementMap
+                in2="turbulence"
+                in="SourceGraphic"
+                result="fractal"
+                scale="-1920"
+                xChannelSelector="R"
+                yChannelSelector="G">
+                <animate
+                    attributeName="scale"
+                    values="-1920;-3200;-1920"
+                    dur="6s"
+                    repeatCount="indefinite" />
+            </feDisplacementMap>
+            <feGaussianBlur in="fractal" stdDeviation=".5">
+                <animate
+                    attributeName="stdDeviation"
+                    values=".2;.5;.2"
+                    dur="3s"
+                    repeatCount="indefinite" />
+            </feGaussianBlur>
+        </filter>
+    </svg>
+
+    <script src="./app.js"></script>
+</body>
+</html>
