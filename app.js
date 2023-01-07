@@ -211,3 +211,10 @@ function loadContent(contentType, contentName) {
             break;
     }
 }
+
+const dipsMap = document.getElementById('dispMap');
+const turbulence = document.getElementById('turbulence');
+
+setInterval(() => {
+    turbulence.setAttribute('baseFrequency', Math.random())
+}, 5000);

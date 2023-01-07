@@ -19,7 +19,7 @@
             <div id="bio" class="left-content">
                 <div id="bio-text">
                     <h1>Yusuf Bıyık</h1>
-                    <p>Yazılıma 8.sınıfta HTML, CSS ve PHP öğrenerek başladım ve o günden beri kendim, çevrem ve müşterilerim içim kendimi aşan projeler yapıp gelişiyorum.</p>    
+                    <p>Yazılıma 8.sınıfta HTML, CSS ve PHP öğrenerek başladım ve o günden beri kendim, çevrem ve müşterilerim içim kendimi aşan projeler yapıyorum.</p>    
                 </div>
                 <div class="link-list">
                     <a onclick="loadContent('detailed-gallery', 'projelerim')" href="#content">Projelerim</a>
@@ -40,23 +40,25 @@
     <svg style="display: none;">
         <filter id='noiseFilter'>
             <feTurbulence 
+                id="turbulence"
                 type='turbulence' 
                 baseFrequency='.47' 
                 numOctaves='2' 
                 result="turbulence">
             </feTurbulence>
             <feDisplacementMap
+                id="dispMap"
                 in2="turbulence"
                 in="SourceGraphic"
                 result="fractal"
                 scale="-1920"
                 xChannelSelector="R"
                 yChannelSelector="G">
-                <animate
+                <!-- <animate
                     attributeName="scale"
                     values="-1920;-3200;-1920"
                     dur="6s"
-                    repeatCount="indefinite" />
+                    repeatCount="indefinite" /> -->
             </feDisplacementMap>
         </filter>
     </svg>
