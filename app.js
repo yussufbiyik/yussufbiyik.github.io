@@ -52,7 +52,7 @@ const pages = [
             {
                 background:'./assets/periyodik-tablo.webp',
                 name:'Periyodik Tablo',
-                summary: "Bir müşterim için sonradan geliştirdiğim bir mobil uygulamanın basit bir prototipi, sonraki aşamada prototipi Angular'a uyarlayıp Cordova ile bir mobil uygulamaya çevirdim..",
+                summary: "Bir müşterim için sonradan geliştirdiğim bir mobil uygulamanın basit bir prototipi, sonraki aşamada prototipi Angular'a uyarlayıp Cordova ile bir mobil uygulamaya çevirdim.",
                 actions: [
                     {
                         name: "Kaynak Kod",
@@ -212,9 +212,13 @@ function loadContent(contentType, contentName) {
     }
 }
 
+var isBackgroundAnimationEnabled = true;
+
 const dipsMap = document.getElementById('dispMap');
 const turbulence = document.getElementById('turbulence');
 
-setInterval(() => {
-    turbulence.setAttribute('baseFrequency', Math.random())
-}, 5000);
+setInterval(async () => {
+    console.time('bgRefresh')
+    if(isBackgroundAnimationEnabled) turbulence.setAttribute('baseFrequency', Math.random());
+    console.timeEnd('bgRefresh')
+}, 15000);

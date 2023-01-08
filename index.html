@@ -26,7 +26,14 @@
                     <a onclick="loadContent('custom', 'yetkinliklerim')" href="#content">Yetkinliklerim</a>
                     <a onclick="loadContent('gallery', 'pixel-art')" href="#content">Pixel Art</a>
                     <a onclick="loadContent('gallery', '3d-modelleme-renderlar')" href="#content">3D Modelleme/Renderlar</a>
-                    <small>En iyi deneyim için masaüstünde ziyaret edin.</small>
+
+                    <small>
+                        En iyi deneyim için masaüstünde ziyaret edin.
+                        <br><br>
+                        Ara ara kasmalar yaşayabilirsiniz, 
+                        <abbr style="cursor: help;" title="SVG filter ile yapıldığı için bi tık zorluyor, çözmeye, olmazsa da alternatiflerini bulmaya çalışıyorum merak etmeyin.">arkaplandan</abbr> 
+                        kaynaklanıyor 🙍‍♂️
+                    </small>
                 </div>
             </div>
             <div id="content" class="right-content moveable">
@@ -37,13 +44,14 @@
         </div>
         <div class="bottombar"></div>
     </div>
-    <svg style="display: none;">
+    <svg width='300' height='300' style="display: none;">
         <filter id='noiseFilter'>
             <feTurbulence 
                 id="turbulence"
                 type='turbulence' 
-                baseFrequency='.47' 
+                baseFrequency='.99' 
                 numOctaves='2' 
+                stitchTiles='stitch'
                 result="turbulence">
             </feTurbulence>
             <feDisplacementMap
@@ -62,7 +70,6 @@
             </feDisplacementMap>
         </filter>
     </svg>
-
     <script src="./app.js"></script>
 </body>
 </html>
