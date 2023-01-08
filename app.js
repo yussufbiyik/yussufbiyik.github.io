@@ -218,7 +218,5 @@ const dipsMap = document.getElementById('dispMap');
 const turbulence = document.getElementById('turbulence');
 
 setInterval(async () => {
-    console.time('bgRefresh')
     if(isBackgroundAnimationEnabled) turbulence.setAttribute('baseFrequency', Math.random());
-    console.timeEnd('bgRefresh')
 }, 15000);
