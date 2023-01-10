@@ -27,12 +27,20 @@
                     <a onclick="loadContent('gallery', 'pixel-art')" href="#content">Pixel Art</a>
                     <a onclick="loadContent('gallery', '3d-modelleme-renderlar')" href="#content">3D Modelleme/Renderlar</a>
 
+                    <small>En iyi deneyim için masaüstünde ziyaret edin.</small>
                     <small>
-                        En iyi deneyim için masaüstünde ziyaret edin.
-                        <br><br>
                         Ara ara kasmalar yaşayabilirsiniz, 
                         <abbr style="cursor: help;" title="SVG filter ile yapıldığı için bi tık zorluyor, çözmeye, olmazsa da alternatiflerini bulmaya çalışıyorum merak etmeyin.">arkaplandan</abbr> 
                         kaynaklanıyor 🙍‍♂️
+                    </small>
+                    <small style="
+                        gap: 2px;
+                        display: grid;
+                        grid-auto-flow: column;
+                        align-items: center;
+                        justify-content: start;
+                    ">
+                        <input type="checkbox" name="bgAnimationCheckbox" id="bgAnimationCheckbox"> <label for="bgAnimationCheckbox">Arkaplan değişimini kapat.</label>
                     </small>
                 </div>
             </div>

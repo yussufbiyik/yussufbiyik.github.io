@@ -216,7 +216,12 @@ var isBackgroundAnimationEnabled = true;
 
 const dipsMap = document.getElementById('dispMap');
 const turbulence = document.getElementById('turbulence');
+const animationCheckbox = document.getElementById('bgAnimationCheckbox');
+
+animationCheckbox.addEventListener('change', () => {
+    isBackgroundAnimationEnabled = !isBackgroundAnimationEnabled;
+})
 
 setInterval(async () => {
-    if(isBackgroundAnimationEnabled) turbulence.setAttribute('baseFrequency', Math.random());
+    if(isBackgroundAnimationEnabled && document.hasFocus()) turbulence.setAttribute('baseFrequency', Math.random());
 }, 15000);
