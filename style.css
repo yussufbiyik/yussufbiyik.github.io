@@ -286,6 +286,36 @@ select {
     min-height: 250px;
 }
 
+.theme-selector {
+    gap: 5px;
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: flex-start;
+}
+
+.theme-select {
+    aspect-ratio: 1/1;
+    width: 40px;
+    cursor: pointer;
+    border: var(--default-border-settings);
+}
+
+#darkside {
+    background: black;
+}
+#flashbang {
+    background: white;
+}
+#sepia {
+    background: #492723;
+}
+#neo {
+    background: #00FF41;
+}
+#bios {
+    background: #00005d;
+}
+
 @media (max-width: 1200px) {
     .content {
         grid-template-columns: auto;

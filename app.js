@@ -226,7 +226,6 @@ setInterval(async () => {
     if(isBackgroundAnimationEnabled && document.hasFocus()) turbulence.setAttribute('baseFrequency', Math.random());
 }, 15000);
 
-const themeSelector = document.getElementById('theme-selector');
 const themes = [
     {
         name: 'darkside',
@@ -280,12 +279,12 @@ const themes = [
     }
 ]
 
-themeSelector.addEventListener('change', () => {
-    const selectorValue = themeSelector.value;
+document.querySelectorAll('.theme-select').forEach(element => element.addEventListener('click', () => {
+    const selectorValue = element.getAttribute('data-name');
     const selectedTheme = themes.find(theme => theme.name === selectorValue);
     document.documentElement.style.setProperty('--unfocused-border-color', selectedTheme.data.unfocusedBorderColor);
     document.documentElement.style.setProperty('--hover-border-color', selectedTheme.data.hoverBorderColor);
     document.documentElement.style.setProperty('--background-color', selectedTheme.data.backgroundColor);
     document.documentElement.style.setProperty('--pattern-color', selectedTheme.data.patternColor);
     document.body.style.color = selectedTheme.data.textAssist ? 'black' : 'white';
-})
+}))

@@ -26,15 +26,13 @@
                     <a onclick="loadContent('custom', 'yetkinliklerim')" href="#content">Yetkinliklerim</a>
                     <a onclick="loadContent('gallery', 'pixel-art')" href="#content">Pixel Art</a>
                     <a onclick="loadContent('gallery', '3d-modelleme-renderlar')" href="#content">3D Modelleme/Renderlar</a>
-
-                    <small>Renkler:</small>
-                    <select id="theme-selector">
-                        <option value="darkside">Karanlık</option>
-                        <option value="flashbang">Aydınlık</option>
-                        <option value="neo">Matrix</option>
-                        <option value="bios">BIOS</option>
-                        <option value="sepia">Sepya</option>
-                    </select>
+                    <div class="theme-selector">
+                        <div class="theme-select" title="darkside" id="darkside" data-name="darkside"></div>
+                        <div class="theme-select" title="flashbang" id="flashbang" data-name="flashbang"></div>
+                        <div class="theme-select" title="neo" id="neo" data-name="neo"></div>
+                        <div class="theme-select" title="bios" id="bios" data-name="bios"></div>
+                        <div class="theme-select" title="sepia" id="sepia" data-name="sepia"></div>
+                    </div>
                     <small style="gap: 2px;display: grid;grid-auto-flow: column;align-items: center;justify-content: start;">
                         <input type="checkbox" name="bgAnimationCheckbox" id="bgAnimationCheckbox">
                         <label for="bgAnimationCheckbox">Arkaplan değişimini kapat.</label>
@@ -80,5 +78,17 @@
         </filter>
     </svg>
     <script src="./app.js"></script>
+<!--     
+               ▀                    ▀
+    ▄█   ▄█▄  ▄█    ▄▄▄▄███▄▄▄▄    ▄█  
+    ███ ▄███▀ ███  ▄██▀▀▀███▀▀▀██▄ ███  
+    ███▐██▀   ███▌ ███   ███   ███ ███▌ 
+    ▄█████▀    ███▌ ███   ███   ███ ███▌ 
+    ▀▀█████▄    ███▌ ███   ███   ███ ███▌ 
+    ███▐██▄   ███  ███   ███   ███ ███  
+    ███ ▀███▄ ███  ███   ███   ███ ███  
+    ███   ▀█▀ █▀    ▀█   ███   █▀  █▀   
+    ▀                                     
+-->
 </body>
 </html>
