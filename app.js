@@ -240,7 +240,7 @@ const themes = [
     {
         name: 'matrix',
         data: {
-            hoverBorderColor: '00FF41',
+            hoverBorderColor: '#00FF41',
             unfocusedBorderColor: '#008F11',
             backgroundColor: '#0D0208',
             patternColor: '#00FF41'
