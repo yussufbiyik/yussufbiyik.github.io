@@ -10,7 +10,7 @@
     --hover-border-color: white;
     --background-color: black;
     --pattern-color: white;
-    
+
     --default-border-settings: solid 1px var(--unfocused-border-color);
 }
 
@@ -24,7 +24,7 @@ html, body {
     display: grid;
     position: relative;
     scroll-behavior: smooth;
-
+    color: white;
 }
 
 body::before {
@@ -53,6 +53,7 @@ a {
 }
 a:hover {
     scale: 1.01;
+    color: initial !important;
     font-weight: 900;
 }
 a:active {
@@ -121,7 +122,6 @@ select {
     gap: 10px;
     grid-auto-flow: row;
 
-    color: white;
     padding: 50px;
 }
 

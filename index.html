@@ -19,7 +19,7 @@
             <div id="bio" class="left-content">
                 <div id="bio-text">
                     <h1>Yusuf Bıyık</h1>
-                    <p>Yazılıma 8.sınıfta HTML, CSS ve PHP öğrenerek başladım ve o günden beri kendim, çevrem ve müşterilerim içim kendimi aşan projeler yapıyorum.</p>    
+                    <p>Yazılıma 8.sınıfta HTML, CSS ve PHP öğrenerek başladım ve o günden beri kendim, çevrem ve müşterilerim için kendimi aşan projeler yapıyorum.</p>    
                 </div>
                 <div class="link-list">
                     <a onclick="loadContent('detailed-gallery', 'projelerim')" href="#content">Projelerim</a>
@@ -27,24 +27,21 @@
                     <a onclick="loadContent('gallery', 'pixel-art')" href="#content">Pixel Art</a>
                     <a onclick="loadContent('gallery', '3d-modelleme-renderlar')" href="#content">3D Modelleme/Renderlar</a>
 
+                    <small>Renkler:</small>
+                    <select id="theme-selector">
+                        <option value="darkside">Karanlık</option>
+                        <option value="flashbang">Aydınlık</option>
+                        <option value="neo">Matrix</option>
+                        <option value="bios">BIOS</option>
+                        <option value="sepia">Sepya</option>
+                    </select>
+                    <small style="gap: 2px;display: grid;grid-auto-flow: column;align-items: center;justify-content: start;">
+                        <input type="checkbox" name="bgAnimationCheckbox" id="bgAnimationCheckbox">
+                        <label for="bgAnimationCheckbox">Arkaplan değişimini kapat.</label>
+                    </small>
                     <small>En iyi deneyim için masaüstünde ziyaret edin.</small>
                     <small>
                         Kasmalar yaşayabilirsiniz, <abbr style="cursor: help;" title="SVG filter ile yapıldığı için bi tık zorluyor, çözmeye, olmazsa da alternatiflerini bulmaya çalışıyorum merak etmeyin.">arkaplandan</abbr> kaynaklanıyor.
-                    </small>
-                    <small>Tema Seç:</small>
-                    <select name="" id="theme-selector">
-                        <option value="bnw">Siyah Beyaz</option>
-                        <option value="matrix">Matrix</option>
-                        <option value="bios">BIOS</option>
-                    </select>
-                    <small style="
-                        gap: 2px;
-                        display: grid;
-                        grid-auto-flow: column;
-                        align-items: center;
-                        justify-content: start;
-                    ">
-                        <input type="checkbox" name="bgAnimationCheckbox" id="bgAnimationCheckbox"> <label for="bgAnimationCheckbox">Arkaplan değişimini kapat.</label>
                     </small>
                 </div>
             </div>

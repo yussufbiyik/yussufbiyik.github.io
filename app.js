@@ -229,21 +229,43 @@ setInterval(async () => {
 const themeSelector = document.getElementById('theme-selector');
 const themes = [
     {
-        name: 'bnw',
+        name: 'darkside',
         data: {
             hoverBorderColor: 'white',
             unfocusedBorderColor: '#ffffff80',
             backgroundColor: 'black',
-            patternColor: 'white'
+            patternColor: 'white',
+            textAssist: false,
         }
     },
     {
-        name: 'matrix',
+        name: 'flashbang',
+        data: {
+            hoverBorderColor: 'black',
+            unfocusedBorderColor: '#646464',
+            backgroundColor: 'white',
+            patternColor: 'black',
+            textAssist: true,
+        }
+    },
+    {
+        name: 'sepia',
+        data: {
+            hoverBorderColor: '#f1ab75',
+            unfocusedBorderColor: '#a57550',
+            backgroundColor: '#492723',
+            patternColor: '#eadbcb',
+            textAssist: false,
+        }
+    },
+    {
+        name: 'neo',
         data: {
             hoverBorderColor: '#00FF41',
             unfocusedBorderColor: '#008F11',
             backgroundColor: '#0D0208',
-            patternColor: '#00FF41'
+            patternColor: '#00FF41',
+            textAssist: false,
         }
     },
     {
@@ -252,7 +274,8 @@ const themes = [
             hoverBorderColor: '#a9a9a9',
             unfocusedBorderColor: '#5c5c5c',
             backgroundColor: '#00005d',
-            patternColor: 'white'
+            patternColor: 'white',
+            textAssist: false,
         }
     }
 ]
@@ -264,4 +287,5 @@ themeSelector.addEventListener('change', () => {
     document.documentElement.style.setProperty('--hover-border-color', selectedTheme.data.hoverBorderColor);
     document.documentElement.style.setProperty('--background-color', selectedTheme.data.backgroundColor);
     document.documentElement.style.setProperty('--pattern-color', selectedTheme.data.patternColor);
+    document.body.style.color = selectedTheme.data.textAssist ? 'black' : 'white';
 })
