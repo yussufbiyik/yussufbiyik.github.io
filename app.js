@@ -78,7 +78,7 @@ const pages = [
                             <ul>
                                 <li>
                                     <span>HTML & CSS</span>
-                                    <ul>UIkit, Halfmoon</ul>
+                                    <ul>UIkit</ul>
                                 </li>
                             </ul>
                             <ul>
@@ -225,3 +225,43 @@ animationCheckbox.addEventListener('change', () => {
 setInterval(async () => {
     if(isBackgroundAnimationEnabled && document.hasFocus()) turbulence.setAttribute('baseFrequency', Math.random());
 }, 15000);
+
+const themeSelector = document.getElementById('theme-selector');
+const themes = [
+    {
+        name: 'bnw',
+        data: {
+            hoverBorderColor: 'white',
+            unfocusedBorderColor: '#ffffff80',
+            backgroundColor: 'black',
+            patternColor: 'white'
+        }
+    },
+    {
+        name: 'matrix',
+        data: {
+            hoverBorderColor: '00FF41',
+            unfocusedBorderColor: '#008F11',
+            backgroundColor: '#0D0208',
+            patternColor: '#00FF41'
+        }
+    },
+    {
+        name: 'bios',
+        data: {
+            hoverBorderColor: '#a9a9a9',
+            unfocusedBorderColor: '#5c5c5c',
+            backgroundColor: '#00005d',
+            patternColor: 'white'
+        }
+    }
+]
+
+themeSelector.addEventListener('change', () => {
+    const selectorValue = themeSelector.value;
+    const selectedTheme = themes.find(theme => theme.name === selectorValue);
+    document.documentElement.style.setProperty('--unfocused-border-color', selectedTheme.data.unfocusedBorderColor);
+    document.documentElement.style.setProperty('--hover-border-color', selectedTheme.data.hoverBorderColor);
+    document.documentElement.style.setProperty('--background-color', selectedTheme.data.backgroundColor);
+    document.documentElement.style.setProperty('--pattern-color', selectedTheme.data.patternColor);
+})
