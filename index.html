@@ -26,6 +26,10 @@
                     <a onclick="loadContent('custom', 'yetkinliklerim')" href="#content">Yetkinliklerim</a>
                     <a onclick="loadContent('gallery', 'pixel-art')" href="#content">Pixel Art</a>
                     <a onclick="loadContent('gallery', '3d-modelleme-renderlar')" href="#content">3D Modelleme/Renderlar</a>
+                    <div class="language-selector">
+                        <div class="language-select" title="Türkçe" id="turkish" data-name="tr"></div>
+                        <div class="language-select" title="English" id="english" data-name="eng"></div>
+                    </div>
                     <div class="theme-selector">
                         <div class="theme-select" title="darkside" id="darkside" data-name="darkside"></div>
                         <div class="theme-select" title="flashbang" id="flashbang" data-name="flashbang"></div>
@@ -69,14 +73,10 @@
                 scale="-1920"
                 xChannelSelector="R"
                 yChannelSelector="G">
-                <!-- <animate
-                    attributeName="scale"
-                    values="-1920;-3200;-1920"
-                    dur="6s"
-                    repeatCount="indefinite" /> -->
             </feDisplacementMap>
         </filter>
     </svg>
+    <script src="./datasource.js"></script>
     <script src="./app.js"></script>
 <!--     
                ▀                    ▀
