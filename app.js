@@ -1,3 +1,10 @@
+/*
+TODO:
+    * Change background even if the user is not focused on the page (if it hasn't been a long time since they unfocused)
+    * Clean the code
+    * Comment the code
+*/
+
 const maxMoveAmount = 5;
 Number.prototype.mapNumbers = function (in_min, in_max, out_min, out_max) {
     return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -126,15 +133,20 @@ document.querySelectorAll('.theme-select').forEach(element => element.addEventLi
 var currentLanguage = "tr";
 var activePageName = "projelerim";
 
+const bioParagraph = document.getElementById('bio-paragraph');
+const projelerimButton = document.getElementById('projelerim');
+const yetkinliklerimButton = document.getElementById('yetkinliklerim');
+const pixelArtButton = document.getElementById('pixel-art');
+const ModellemeRenderlarButton = document.getElementById('3d-modelleme-renderlar');
+
 function changeLanguage(languageName) {
     currentLanguage = languageName;
     currentPage = pages.find(page => page.name === activePageName);
+    bioParagraph.innerText = leftSideContent.bioParagraph[currentLanguage];
+    projelerimButton.innerText = leftSideContent.projelerimButton[currentLanguage];
+    yetkinliklerimButton.innerText = leftSideContent.yetkinliklerimButton[currentLanguage];
+    pixelArtButton.innerText = leftSideContent.pixelArtButton[currentLanguage];
+    ModellemeRenderlarButton.innerText = leftSideContent.ModellemeRenderlarButton[currentLanguage];
     loadContent(currentPage.type, activePageName)
 }
 document.querySelectorAll('.language-select').forEach(element => element.addEventListener('click', () => changeLanguage(element.getAttribute('data-name'))));
-
-/*
-TODO:
-    * Add language support of the left side div
-    * Change background even if the user is not focused on the page (if it hasn't been a long time since they unfocused)
-*/

@@ -1,3 +1,32 @@
+/*
+TODO:
+(maybe/someday?)
+    * Move all this content to a database that you can modify so that you don't have to update the code every single time
+*/
+
+const leftSideContent = {
+    bioParagraph: {
+        eng:"I got into software development at 8th grade with HTML, CSS and PHP. I have been making challenging projects for myself, friends and my customers ever since that day.",
+        tr:"Yazılıma 8. sınıfta HTML, CSS ve PHP öğrenerek başladım ve o günden beri kendim, çevrem ve müşterilerim için kendimi aşan projeler yapıyorum."
+    },
+    projelerimButton: {
+        eng:"My Projects",
+        tr: "Projelerim"
+    },
+    yetkinliklerimButton: {
+        eng:"Skills",
+        tr: "Yetkinliklerim"
+    },
+    pixelArtButton: {
+        eng:"Pixel Art",
+        tr: "Pixel Art"
+    },
+    ModellemeRenderlarButton: {
+        eng:"3D Modelling/Renders",
+        tr: "3D Modelleme/Renderlar"
+    },
+}
+
 const pages = [
     {
         name:"projelerim",
@@ -121,7 +150,7 @@ const pages = [
     {
         name: "3d-modelleme-renderlar",
         type:"gallery",
-        heading: {eng:"3D Models/Renders",tr:"3D Modelleme/Renderlar"},
+        heading: {eng:"3D Modelling/Renders",tr:"3D Modelleme/Renderlar"},
         contents: [
             {
                 raw:"https://raw.githubusercontent.com/yussufbiyik/yussufbiyik.github.io/main/assets/room.webp",
