@@ -358,6 +358,9 @@ select {
 }
 
 @media (max-width: 600px) {
+    body::before{
+        opacity: .4;
+    }
     .content {
         grid-template-rows: auto auto;
     }
