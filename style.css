@@ -42,6 +42,33 @@ body::before {
     height: 100%;
 }
 
+.dna-background {
+    overflow: hidden;
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:0;
+    display: grid;
+    align-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+    
+    background: var(--background-color);
+}
+
+.dna-paragraph {
+    font-size:13px !important;
+    margin:0 !important;
+    padding:0 !important;
+    line-height:initial;
+    letter-spacing:initial;
+    font-weight:initial;
+    line-break:none;
+
+    opacity:.15;
+    color: var(--pattern-color);
+}
+
 div:not(.border-no-hover):hover {
     border-color: var(--hover-border-color) !important;
 }
@@ -289,18 +316,25 @@ select {
     min-height: 250px;
 }
 
-.theme-selector, .language-selector {
+.theme-selector, .language-selector, .pattern-selector {
     gap: 5px;
     display: grid;
     grid-auto-flow: column;
     justify-content: flex-start;
 }
 
-.theme-select, .language-select {
+.theme-select, .language-select, .pattern-select {
     aspect-ratio: 1/1;
     width: 40px;
     cursor: pointer;
     border: var(--default-border-settings);
+}
+
+#dnaBackgroundPattern {
+    background-image: url('./assets/icons/dnaBackground.png');
+}
+#noiseBackgroundPattern {
+    background-image: url('./assets/icons/noiseBackground.png');
 }
 
 .language-select {

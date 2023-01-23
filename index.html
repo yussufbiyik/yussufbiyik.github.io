@@ -30,6 +30,10 @@
                         <div class="language-select" title="Türkçe" id="turkish" data-name="tr"></div>
                         <div class="language-select" title="English" id="english" data-name="eng"></div>
                     </div>
+                    <div class="pattern-selector">
+                        <div class="pattern-select" title="noise" id="noiseBackgroundPattern" data-name="noise"></div>
+                        <div class="pattern-select" title="dna" id="dnaBackgroundPattern" data-name="dna"></div>
+                    </div>
                     <div class="theme-selector">
                         <div class="theme-select" title="darkside" id="darkside" data-name="darkside"></div>
                         <div class="theme-select" title="flashbang" id="flashbang" data-name="flashbang"></div>
@@ -55,7 +59,7 @@
         </div>
         <div class="bottombar"></div>
     </div>
-    <svg width='300' height='300' style="display: none;">
+    <svg id="svg-filter" width='300' height='300' style="display: none;">
         <filter id='noiseFilter'>
             <feTurbulence 
                 id="turbulence"

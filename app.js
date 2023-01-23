@@ -4,7 +4,6 @@ TODO:
     * Clean the code
     * Comment the code
 */
-
 const maxMoveAmount = 5;
 Number.prototype.mapNumbers = function (in_min, in_max, out_min, out_max) {
     return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -101,21 +100,6 @@ function loadContent(contentType, contentName) {
     }
 }
 
-
-// Background Related
-var isBackgroundAnimationEnabled = true;
-const dipsMap = document.getElementById('dispMap');
-const turbulence = document.getElementById('turbulence');
-
-const animationCheckbox = document.getElementById('bgAnimationCheckbox');
-animationCheckbox.addEventListener('change', () => {
-    isBackgroundAnimationEnabled = !isBackgroundAnimationEnabled;
-});
-
-setInterval(async () => {
-    // Add && document.hasFocus() to only change background when the page is visible
-    if(isBackgroundAnimationEnabled) turbulence.setAttribute('baseFrequency', Math.random());
-}, 20000);
 // themes from "datasource.js"
 function changeTheme(themeName) {
     const selectedTheme = themes.find(theme => theme.name === themeName);
@@ -150,3 +134,107 @@ function changeLanguage(languageName) {
     loadContent(currentPage.type, activePageName)
 }
 document.querySelectorAll('.language-select').forEach(element => element.addEventListener('click', () => changeLanguage(element.getAttribute('data-name'))));
+
+// Background Related
+const backgroundNoiseAnimationInterval = 20000;
+const backgroundDNAAnimationInterval = 5000;
+
+var isBackgroundAnimationEnabled = true;
+const dipsMap = document.getElementById('dispMap');
+const turbulence = document.getElementById('turbulence');
+
+const animationCheckbox = document.getElementById('bgAnimationCheckbox');
+animationCheckbox.addEventListener('change', () => {
+    isBackgroundAnimationEnabled = !isBackgroundAnimationEnabled;
+});
+
+setInterval(async () => {
+    // Add && document.hasFocus() to only change background when the page is visible
+    if(isBackgroundAnimationEnabled) turbulence.setAttribute('baseFrequency', Math.random());
+}, backgroundNoiseAnimationInterval);
+
+
+// Background Change Related
+var activeBackground = "noise"
+function createDNABackground(backgroundInterval) {
+    const horizontalCellCount = document.body.clientWidth, 
+    verticalCellCount = document.body.clientHeight;
+    var DNAString = [], matchingDNAString = [];
+
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    for (let index = 0; index < horizontalCellCount; index++) {
+        let selectedNucleotide;
+        let matchingNucleotide;
+        switch (getRandomInt(1, 4)) {
+            case 1:
+                selectedNucleotide = "A";
+                matchingNucleotide = "T";
+                break;
+            case 2:
+                selectedNucleotide = "T";
+                matchingNucleotide = "A";
+                break;
+            case 3:
+                selectedNucleotide = "G";
+                matchingNucleotide = "C";
+                break;
+            case 4:
+                selectedNucleotide = "C";
+                matchingNucleotide = "G";
+                break;
+        }
+        DNAString.push(selectedNucleotide);
+        matchingDNAString.push(matchingNucleotide);
+    }
+    // Assuming the text you want is 1em (16px), we must divide the cell amount to 16
+    const textDuplicationAmount = Math.floor(verticalCellCount/13);
+    const DNAStringAsString = DNAString.join(''), matchingDNAStringAsString = matchingDNAString.join('');
+
+    const DNAContainerElement = document.createElement('div');
+    DNAContainerElement.setAttribute('id', 'dna-background')
+    DNAContainerElement.classList.add('dna-background');
+    DNAContainerElement.style = `width: 100%;height: ${verticalCellCount}px;`
+    for (let index = 1; index < textDuplicationAmount+1; index++) {
+        const DNAStringElement = document.createElement('p');
+        DNAStringElement.classList.add('dna-paragraph');
+        DNAStringElement.innerText = (index % 2 == 0) ?  DNAStringAsString : matchingDNAStringAsString;
+        DNAContainerElement.appendChild(DNAStringElement)
+    }
+    document.body.appendChild(DNAContainerElement)
+
+    setInterval(() => {
+        DNAContainerElement.scrollTo({
+            top:getRandomInt(0, DNAContainerElement.clientHeight),
+            left:getRandomInt(0, DNAContainerElement.clientWidth),
+            behavior:'smooth'
+        }) 
+    }, backgroundInterval);
+}
+function destroyDNABackground(){
+    document.getElementById('dna-background').remove();
+}
+const noiseBackground = document.getElementById('svg-filter');
+function createNoiseBackground() {
+    document.body.appendChild(noiseBackground);
+}
+function destroyNoiseBackground() {
+    document.getElementById('svg-filter').remove();
+}
+
+function changeBackground(backgroundName) {
+    if(backgroundName === "dna" && activeBackground != "dna") {
+        activeBackground = "dna";
+        destroyNoiseBackground();
+        createDNABackground(backgroundDNAAnimationInterval);
+    }else if(backgroundName === "noise" && activeBackground != "noise") {
+        activeBackground = "noise";
+        destroyDNABackground();
+        createNoiseBackground();
+    }
+}
+
+document.querySelectorAll('.pattern-select').forEach(element => element.addEventListener('click', () => changeBackground(element.getAttribute('data-name'))));
