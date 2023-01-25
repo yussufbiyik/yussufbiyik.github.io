@@ -52,6 +52,24 @@ const pages = [
                 ]
             },
             {
+                background: './assets/oe.webp',
+                name: {eng:"Online Education Software", tr:"Online Eğitim Yazılımı"},
+                summary: {
+                    eng:"Live stream software made using Electron and Ffmpeg to stream videos to YouTube. Inludes webcam and built-in live chat for students to use.",
+                    tr:"Electron ve Ffmpeg kullanarak Youtube'a canlı yayın yapabilen bir online eğitim yazılım. İçerisinde webcam ve öğrencilerin kullanması için dahili anlık chat de barındırıyor."
+                },
+                actions: []
+            },
+            {
+                background: './assets/playscraper.webp',
+                name: {eng:"Mobile App Scraper", tr:"Mobil Uygulama Scraper"},
+                summary: {
+                    eng:"An app that can scrape and update mobile app data from Google Play using an unofficial API. Made using Electron.",
+                    tr:"Electron ve resmi olmayan Google Play API'ı ile mobil oyunların verisini çekip, düzenleyip, csv formatında dışarı aktarabilen bir yazılım."
+                },
+                actions: []
+            },
+            {
                 background:'./assets/otoroblox.webp',
                 name:{eng:"OtoRoblox", tr:"OtoRoblox"},
                 summary: {
