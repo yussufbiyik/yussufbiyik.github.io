@@ -366,6 +366,22 @@ select {
     background: #00005d;
 }
 
+.snippets-container{
+    gap: 5px;
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-rows: auto 1fr;
+}
+
+.snippets  {
+    display: grid;
+    gap: 5px;
+    overflow: auto;
+    grid-auto-flow: column;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: repeat(3, 400px);
+}
+
 @media (max-width: 1200px) {
     .content {
         grid-template-columns: auto;

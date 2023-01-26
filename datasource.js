@@ -149,6 +149,46 @@ const pages = [
             </div>`
     },
     {
+        name: "snippets",
+        type:"custom",
+        heading: {eng:"Snippets", tr:"Ufak Parçalar"},
+        content: `
+            <div class="snippets-container">
+                <div class="snippets">
+                    <iframe height="300" style="width: 100%;" scrolling="no" title="ChatGPT Experiments #1: Mouse Force Field" src="https://codepen.io/yusufbiyik/embed/bGjvEpm?default-tab=result&theme-id=dark" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+                        See the Pen <a href="https://codepen.io/yusufbiyik/pen/bGjvEpm">
+                        ChatGPT Experiments #1: Mouse Force Field</a> by yussuf (<a href="https://codepen.io/yusufbiyik">@yusufbiyik</a>)
+                        on <a href="https://codepen.io">CodePen</a>.
+                    </iframe>
+                    <iframe height="300" style="width: 100%;" scrolling="no" title="Auto Adjusting Navbar" src="https://codepen.io/yusufbiyik/embed/MWogbNJ?default-tab=result&theme-id=dark" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+                        See the Pen <a href="https://codepen.io/yusufbiyik/pen/MWogbNJ">
+                        Auto Adjusting Navbar</a> by yussuf (<a href="https://codepen.io/yusufbiyik">@yusufbiyik</a>)
+                        on <a href="https://codepen.io">CodePen</a>.
+                    </iframe>
+                    <iframe height="300" style="width: 100%;" scrolling="no" title="Randomly Generated DNA background" src="https://codepen.io/yusufbiyik/embed/rNrJRXB?default-tab=result&theme-id=dark" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+                        See the Pen <a href="https://codepen.io/yusufbiyik/pen/rNrJRXB">
+                        Randomly Generated DNA background</a> by yussuf (<a href="https://codepen.io/yusufbiyik">@yusufbiyik</a>)
+                        on <a href="https://codepen.io">CodePen</a>.
+                    </iframe>
+                    <iframe height="300" style="width: 100%;" scrolling="no" title="Animated SVG  Background V2" src="https://codepen.io/yusufbiyik/embed/dyjNVOj?default-tab=result&theme-id=dark" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+                        See the Pen <a href="https://codepen.io/yusufbiyik/pen/dyjNVOj">
+                        Animated SVG  Background V2</a> by yussuf (<a href="https://codepen.io/yusufbiyik">@yusufbiyik</a>)
+                        on <a href="https://codepen.io">CodePen</a>.
+                    </iframe>
+                    <iframe height="300" style="width: 100%;" scrolling="no" title="Mouse based element shaking" src="https://codepen.io/yusufbiyik/embed/PoBoqZv?default-tab=result&theme-id=dark" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+                        See the Pen <a href="https://codepen.io/yusufbiyik/pen/PoBoqZv">
+                        Mouse based element shaking</a> by yussuf (<a href="https://codepen.io/yusufbiyik">@yusufbiyik</a>)
+                        on <a href="https://codepen.io">CodePen</a>.
+                    </iframe>
+                    <iframe height="300" style="width: 100%;" scrolling="no" title="Night Mode Demo with a Card" src="https://codepen.io/yusufbiyik/embed/qBEygeE?default-tab=result&theme-id=dark" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+                        See the Pen <a href="https://codepen.io/yusufbiyik/pen/qBEygeE">
+                        Night Mode Demo with a Card</a> by yussuf (<a href="https://codepen.io/yusufbiyik">@yusufbiyik</a>)
+                        on <a href="https://codepen.io">CodePen</a>.
+                    </iframe>
+                </div>
+            </div>`
+    },
+    {
         name: "pixel-art",
         type:"gallery",
         heading: {eng:"Pixel Art", tr:"Pixel Art"},
