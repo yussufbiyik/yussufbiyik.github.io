@@ -120,6 +120,7 @@ var activePageName = "projelerim";
 const bioParagraph = document.getElementById('bio-paragraph');
 const projelerimButton = document.getElementById('projelerim');
 const yetkinliklerimButton = document.getElementById('yetkinliklerim');
+const snippetsButton = document.getElementById('snippets');
 const pixelArtButton = document.getElementById('pixel-art');
 const ModellemeRenderlarButton = document.getElementById('3d-modelleme-renderlar');
 
@@ -128,6 +129,7 @@ function changeLanguage(languageName) {
     currentPage = pages.find(page => page.name === activePageName);
     bioParagraph.innerText = leftSideContent.bioParagraph[currentLanguage];
     projelerimButton.innerText = leftSideContent.projelerimButton[currentLanguage];
+    snippetsButton.innerText = leftSideContent.snippetsButton[currentLanguage];
     yetkinliklerimButton.innerText = leftSideContent.yetkinliklerimButton[currentLanguage];
     pixelArtButton.innerText = leftSideContent.pixelArtButton[currentLanguage];
     ModellemeRenderlarButton.innerText = leftSideContent.ModellemeRenderlarButton[currentLanguage];

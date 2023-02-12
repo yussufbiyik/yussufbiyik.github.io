@@ -2,16 +2,21 @@
 TODO:
 (maybe/someday?)
     * Move all this content to a database that you can modify so that you don't have to update the code every single time
+    * Add some cool easter eggs, like the following site: https://dimden.dev/
 */
 
 const leftSideContent = {
     bioParagraph: {
-        eng:"I got into software development at 8th grade with HTML, CSS and PHP. I have been making challenging projects for myself, friends and my customers ever since that day.",
-        tr:"Yazılıma 8. sınıfta HTML, CSS ve PHP öğrenerek başladım ve o günden beri kendim, çevrem ve müşterilerim için kendimi aşan projeler yapıyorum."
+        eng:"I got into software development at 8th grade with HTML, CSS and PHP. I have been growing by making challenging projects for myself, friends and my customers ever since that day.",
+        tr:"Yazılıma 8. sınıfta HTML, CSS ve PHP öğrenerek başladım ve o günden beri kendim, çevrem ve müşterilerim için kendimi aşan projeler yaparak gelişiyorum."
     },
     projelerimButton: {
         eng:"My Projects",
         tr: "Projelerim"
+    },
+    snippetsButton: {
+        eng:"Snippets",
+        tr: "Ufak Parçalar"
     },
     yetkinliklerimButton: {
         eng:"Skills",
