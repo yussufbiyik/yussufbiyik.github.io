@@ -3,6 +3,8 @@ TODO:
 (maybe/someday?)
     * Move all this content to a database that you can modify so that you don't have to update the code every single time
     * Add some cool easter eggs, like the following site: https://dimden.dev/
+    * Add your stats
+        * (https://github-readme-stats.vercel.app/api/top-langs/?username=yussufbiyik&show_icons=true&theme=transparent&include_all_commits=true&ring_color=fff&hide_border=true&text_color=fff&icon_color=fff&title_color=fff)
 */
 
 const leftSideContent = {
