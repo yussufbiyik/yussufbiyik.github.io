@@ -3,6 +3,9 @@ TODO:
     * Change background even if the user is not focused on the page (if it hasn't been a long time since they unfocused)
     * Clean the code
     * Comment the code
+    * Experiment with zooming in and out of the noise background, 
+        * it seems to generate the different base frequencies at at same time. 
+        * You can prevent creating new noises and losing performance by using this (if the hypothesis is true).
 */
 const maxMoveAmount = 5;
 Number.prototype.mapNumbers = function (in_min, in_max, out_min, out_max) {

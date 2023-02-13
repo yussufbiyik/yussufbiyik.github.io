@@ -58,7 +58,24 @@
                 </div>
             </div>
         </div>
-        <div class="bottombar"></div>
+        <div class="bottombar">
+            <!-- 
+                TODO:
+                    * Connect chat to Firebase and enable live chat,
+                    * Give ID's to users based on their number on the visitor list,
+                    * Customize incoming and outgoing texts to look more like a chatroom from old web,
+                    * Add Turkish profanity filter then add English,
+                    * Add commands for some easter eggs and backsite gateways.
+            -->
+            <span>💬 Chat</span>
+            <div id="chat-box">
+                <div id="chat-messages"></div>
+                <div id="chat-input-container">
+                    <input placeholder="Mesajını gir, lütfen kötü konuşma." type="text" id="message-input">
+                    <button id="message-submit-button">→</button>
+                </div>
+            </div>
+        </div>
     </div>
     <svg id="svg-filter" width='300' height='300' style="display: none;">
         <filter id='noiseFilter'>
