@@ -61,7 +61,7 @@
         <div class="bottombar">
             <!-- 
                 TODO:
-                    * Connect chat to Firebase and enable live chat,
+                    * Prevent html, js message input
                     * Give ID's to users based on their number on the visitor list,
                     * Customize incoming and outgoing texts to look more like a chatroom from old web,
                     * Add Turkish profanity filter then add English,
@@ -99,6 +99,53 @@
         </filter>
     </svg>
     <script src="./datasource.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getFirestore, doc, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"
+
+        //! FIREBASE CONFIG IS HIDDEN IN ORDER TO COMMIT THE CHANGES, THIS WILL BE LIKE THIS UNTIL I FIGURE IT OUT
+    
+        // Initialize Firebase
+        var didMessagesLoad = false;
+        const fireApp = initializeApp(firebaseConfig);
+        const cloudDatabase = getFirestore(fireApp);
+        const msNow = Date.now();
+        const q = query(collection(cloudDatabase, "chat-messages"), orderBy("createdAt", "asc"));
+        const chatMessagesElement = document.getElementById('chat-messages');
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const messages = [];
+            if(didMessagesLoad === false) {
+                querySnapshot.forEach((doc) => {
+                    messages.push(doc.data());
+                    const messageDate = new Date(doc.data().createdAt.seconds*1000); 
+                    const messageTime = messageDate.toTimeString().split(' ')[0];
+                    const isAdmin = (name) => {if(name === "yusufbiyik") return "isAdmin"}
+                    const isPinned = (pinValue) => {if(pinValue && pinValue == true) return "isPinned"}
+                    chatMessagesElement.innerHTML += `
+                        <div class="chat-message ${isPinned(doc.data().isPinned)}">
+                            <span class="message-author">[<span class="${isAdmin(doc.data().author)}">${doc.data().author}</span>]</span>
+                            <span class="message-hour">[${messageTime}]:</span>
+                            <span class="message">${doc.data().message}</span>
+                        </div>`
+                });
+                didMessagesLoad = true;
+                chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight;
+            }else {
+                querySnapshot.docChanges().forEach(change => {
+                    messages.push(change.doc.data())
+                    const messageDate = new Date(change.doc.data().createdAt.seconds*1000); 
+                    const messageTime = messageDate.toTimeString().split(' ')[0];
+                    chatMessagesElement.innerHTML += `
+                        <div class="chat-message ${isPinned(change.doc.data().isPinned)}">
+                            <span class="message-author">[<span class="${isAdmin(change.doc.data().author)}">${change.doc.data().author}</span>]</span>
+                            <span class="message-hour">[${messageTime}]:</span>
+                            <span class="message">${change.doc.data().message}</span>
+                        </div>`
+                })
+                if(chatMessagesElement.scrollHeight<200) {chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight}
+            }
+        });
+    </script>
     <script src="./app.js"></script>
 <!--     
                ▀                    ▀
