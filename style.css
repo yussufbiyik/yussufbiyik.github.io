@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400&display=swap');
 
 * {
     box-sizing: border-box;
@@ -16,7 +17,7 @@
     --turkish-flag: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFwAAABcCAMAAADUMSJqAAAAbFBMVEXjChf////iAADjABHjAA3jBRTiAAf96On619n97O385Ob+9fb+8vPnQUf2wcPmLjf1rLD73d/5yszqX2TmNz7lGCbwjpLvhorzpqntcXftaW/mJzHpSVDrWWH/+vvkEx/3ur7vfoPzmp/pUFa6+WgqAAACcklEQVRoge1Y27ZjQBClbwjaJRFNIkj+/x8Hc06WIlqn8TBrej+zV3XVrqtlGRgYGBgY/JeghKE3GKY7UmNkhWUep4lzclPRni8Y7URPCcquqWOPkDS5hcgO3ISGjW/PEMQRw1vNRlHzmFMP9OKGtpnNcuczdY9TiTYYzy7NjNF3eZwXZZHHPLFFpu15dHOn1N6zit6SjM4ivmnazu7ehNpte5G/P8AMsarW445OkPrxzOYRxFrkJJtwJ+GW8AFQGkPuNNomvDFQPuG29sjIv8AZzEpXX3NzIOgU787W7VGtZawKAHm57u/6nCmyIwEdTlb/oxa/qkWcMsAdVOtOoTVXeV8HVELDFVoDzVLbiX6jTiUBQLCmKERzILdd3KcZZai+LwYAw8T3VHoaHoqcYH2rPYu0WSRHBegPsYorcZT03+Zhwf2H7d8X0wJdgVdaNfLhtT9WSYQDheifFVxOUDiqz2m97EgC+s8pXMt8itD9OdKA/1o2hxI+Jk8ieaXtQlimoK3IsolioERXntZ1GU8mD2lafEduFSnktrmU/Fu30KsLjJfK6/uAslKM5hsvlOjreyn2ehnFlFNJaYFJlKskEQElQ+KYDen/fF2d7ufgsuhK/cLVWF3durVNwpclpltynaGN427QqyTkes0iCH8diCV9UbPNtQovtLQaNOVCcSQjLzhaFAqjRaE6Whw6FB07zh06iHZ198AR+tDh/9PaInZbW9QWLlzp2v5hVQxmq6L2hYFE8ZR9tyV3bT1PNq3nK4eFerM4Cf54EvHEZfNJxPo55vBjjjk9xmco3p+hyF5nqAEHHtAMDAwMDAz+efwB0E8ihXq+a9gAAAAASUVORK5CYII=');
     --english-flag: url('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Square_Flag_of_the_United_Kingdom.svg/1200px-Square_Flag_of_the_United_Kingdom.svg.png');
 
-    --chat-font: Courier;
+    --chat-font: 'Inconsolata', monospace;
 }
 
 html, body {

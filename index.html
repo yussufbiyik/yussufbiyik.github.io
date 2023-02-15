@@ -101,7 +101,7 @@
     <script src="./datasource.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getFirestore, doc, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"
+        import { getFirestore, doc, collection, query, orderBy, onSnapshot, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"
 
         //! FIREBASE CONFIG IS HIDDEN IN ORDER TO COMMIT THE CHANGES, THIS WILL BE LIKE THIS UNTIL I FIGURE IT OUT
 
@@ -115,17 +115,26 @@
         var didMessagesLoad = false;
         const chatMessagesElement = document.getElementById('chat-messages');
 
+
         const messages = [];
+        var htmlRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
+        // Following 2 functions return values that are CSS classes, these classes modify the look of the message.
+        const isAdmin = (name) => {if(name === "yusufbiyik") return "isAdmin"}
+        const isPinned = (pinValue) => {if(pinValue && pinValue == true) return "isPinned"}
+        // Turns message createdAt(creation date) to HH:MM:SS format
+        const formatCreationDate = (docData) => {
+            const messageTime = new Date(docData.createdAt.seconds*1000).toTimeString().split(' ')[0];
+            return messageTime
+        }
+        function generateMessageHTML(docData, messageId) {
+            return `<div class="chat-message ${isPinned(docData.isPinned)}" id="${messageId}">
+                        <span class="message-author">[<span class="${isAdmin(docData.author)}">${docData.author}</span>]</span>
+                        <span class="message-hour">[${formatCreationDate(docData)}]:</span>
+                        <span class="message">${docData.message}</span>
+                    </div>`
+        }
         // Triggers when collection is changed whether by a new document or by an updated one
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            // Following 2 functions return values that are CSS classes, these classes modify the look of the message.
-            const isAdmin = (name) => {if(name === "yusufbiyik") return "isAdmin"}
-            const isPinned = (pinValue) => {if(pinValue && pinValue == true) return "isPinned"}
-            // Turns message createdAt(creation date) to HH:MM:SS format
-            const formatCreationDate = (docData) => {
-                const messageTime = new Date(docData.createdAt.seconds*1000).toTimeString().split(' ')[0];
-                return messageTime
-            }
             // If messages  were initally loaded, then there is no need to load all the messages again,
             // so otherwise load only the changes,
             // Following if statement does exactly that.
@@ -133,12 +142,7 @@
                 querySnapshot.forEach((doc) => {
                     messages.push(doc.data());
                     // Add the message to the message container
-                    chatMessagesElement.innerHTML += `
-                        <div class="chat-message ${isPinned(doc.data().isPinned)}">
-                            <span class="message-author">[<span class="${isAdmin(doc.data().author)}">${doc.data().author}</span>]</span>
-                            <span class="message-hour">[${formatCreationDate(doc.data())}]:</span>
-                            <span class="message">${doc.data().message}</span>
-                        </div>`
+                    chatMessagesElement.innerHTML += generateMessageHTML(doc.data(), doc.id);
                 });
                 didMessagesLoad = true;
                 // Scroll to bottom
@@ -147,16 +151,36 @@
                 querySnapshot.docChanges().forEach(change => {
                     messages.push(change.doc.data())
                     // Add the message to the message container
-                    chatMessagesElement.innerHTML += `<div class="chat-message ${isPinned(change.doc.data().isPinned)}">
-                            <span class="message-author">[<span class="${isAdmin(change.doc.data().author)}">${change.doc.data().author}</span>]</span>
-                            <span class="message-hour">[${formatCreationDate(change.doc.data())}]:</span>
-                            <span class="message">${change.doc.data().message}</span>
-                        </div>`
+                    chatMessagesElement.innerHTML += generateMessageHTML(change.doc.data(), change.doc.id);
                 })
                 // Scroll to bottom if the user isn't far away from it
                 if(chatMessagesElement.scrollHeight<200) {chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight}
             }
         });
+
+        const userMessageInput = document.getElementById("message-input");
+        const messageSubmitButton = document.getElementById("message-submit-button");
+        // Auto click the submit button if the key is enter
+        userMessageInput.addEventListener("keypress", (event) => {
+            if(!(event.keyCode == 13)) return;
+            messageSubmitButton.click();
+        });
+        // Add the message to the collection
+        messageSubmitButton.onclick = async () => {
+            // Return if the message is empty
+            if(userMessageInput.value.trim().length < 1) return;
+            // Clean the empty spaces, delete HTML tags and define the message
+            const messageInputValue = userMessageInput.value.trim().replace(htmlRegex, "");
+            // Clear the message input
+            userMessageInput.value = "";
+            // Add the message to the document
+            await addDoc(collection(cloudDatabase, "chat-messages"), {
+                author:"testinput",
+                message:messageInputValue,
+                isPinned: false,
+                createdAt: Timestamp.fromDate(new Date())
+            })
+        }
     </script>
     <script src="./app.js"></script>
 <!--     
