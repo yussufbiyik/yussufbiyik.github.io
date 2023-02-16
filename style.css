@@ -228,9 +228,13 @@ select {
     display: grid;
     justify-content: start;
     grid-auto-flow: column;
+    margin: 1px 0px;
+    border: solid rgba(255, 255, 255, 0.1);
+    border-width: 1px 0;
 }
 
 .isAdmin {background-color: rgba(255, 0, 0, 0.5);}
+.isServer {background-color: rgba(0, 0, 255, 0.5);}
 .isPinned {background-color: rgba(255, 255, 255, 0.1);}
 
 #chat-input-container {

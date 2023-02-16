@@ -61,13 +61,10 @@
         <div class="bottombar">
             <!-- 
                 TODO:
-                    * Prevent html, js message input
-                    * Give ID's to users based on their number on the visitor list,
-                    * Customize incoming and outgoing texts to look more like a chatroom from old web,
                     * Add Turkish profanity filter then add English,
                     * Add commands for some easter eggs and backsite gateways.
             -->
-            <span>💬 Chat</span>
+            <span><img height="14px" src="./assets/icons/chaticon.png" alt=""> Chat</span>
             <div id="chat-box">
                 <div id="chat-messages"></div>
                 <div id="chat-input-container">
@@ -99,43 +96,89 @@
         </filter>
     </svg>
     <script src="./datasource.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getFirestore, doc, collection, query, orderBy, onSnapshot, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"
+        import { getFirestore, doc, collection, query, orderBy, onSnapshot, addDoc, Timestamp, where } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"
 
-        //! FIREBASE CONFIG IS HIDDEN IN ORDER TO COMMIT THE CHANGES, THIS WILL BE LIKE THIS UNTIL I FIGURE IT OUT
+        // var userIpAdress;
+        // axios.get('https://api.ipify.org', {"Content-Type": "application/json"})
+        //     .then(function (response) {
+        //         userIpAdress = response.data
+        //         console.log(response.data);
+        //     })
+        //     .catch(function (error) {
+        //         console.log(error);
+        //     })
+
+        // I learnt that this was okay to expose
+        // https://stackoverflow.com/a/37484053/9969425
+        const firebaseConfig = {
+            apiKey: "AIzaSyCqIOggNSBuMQlH-MVzbKTq7ebc6ZWVWL8",
+            authDomain: "yusufbiyik-4a3c4.firebaseapp.com",
+            projectId: "yusufbiyik-4a3c4",
+            storageBucket: "yusufbiyik-4a3c4.appspot.com",
+            messagingSenderId: "162196856906",
+            appId: "1:162196856906:web:597a6a772c65190ad186b3"
+        };
 
         // Initialize Firebase
         const fireApp = initializeApp(firebaseConfig);
         const cloudDatabase = getFirestore(fireApp);
         const msNow = Date.now();
+        /*
+            To list messages from only the last 6 hours:
+            get this out of the comment line 
+            const nowTimestamp = Timestamp.fromDate(new Date(msNow-21600000))
+            add this to the query 
+            ,where("createdAt", ">=", nowTimestamp)
+        */
         // List chat messages in ascending order of creation date
         const q = query(collection(cloudDatabase, "chat-messages"), orderBy("createdAt", "asc"));
         // Define a variable to determine if the all the messages loaded initally
         var didMessagesLoad = false;
+        var userIdentifier = Math.floor(100000 + Math.random() * 900000);
+        console.log(localStorage.getItem("username"))
+        var username = (localStorage.getItem("username") === null) ? "Anonim" + userIdentifier : localStorage.getItem("username");
         const chatMessagesElement = document.getElementById('chat-messages');
 
 
         const messages = [];
         var htmlRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
         // Following 2 functions return values that are CSS classes, these classes modify the look of the message.
-        const isAdmin = (name) => {if(name === "yusufbiyik") return "isAdmin"}
+        const isKnownUser = (name) => {
+            switch (name) {
+                case "yusufbiyik":
+                    return "isAdmin"
+                case "server":
+                    return "isServer"
+            }
+        }
         const isPinned = (pinValue) => {if(pinValue && pinValue == true) return "isPinned"}
+        const serverMessageCreator = (message) => {
+            return {
+                author:"server",
+                message: message,
+                isPinned: true,
+                createdAt: Timestamp.fromDate(new Date())
+            }
+        }
         // Turns message createdAt(creation date) to HH:MM:SS format
         const formatCreationDate = (docData) => {
             const messageTime = new Date(docData.createdAt.seconds*1000).toTimeString().split(' ')[0];
             return messageTime
         }
         function generateMessageHTML(docData, messageId) {
+            if(messageId == undefined) messageId = "";
             return `<div class="chat-message ${isPinned(docData.isPinned)}" id="${messageId}">
-                        <span class="message-author">[<span class="${isAdmin(docData.author)}">${docData.author}</span>]</span>
                         <span class="message-hour">[${formatCreationDate(docData)}]:</span>
+                        <span class="message-author">[<span class="${isKnownUser(docData.author)}">${docData.author}</span>]: </span>
                         <span class="message">${docData.message}</span>
                     </div>`
         }
         // Triggers when collection is changed whether by a new document or by an updated one
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            // If messages  were initally loaded, then there is no need to load all the messages again,
+            // If messages were initally loaded, then there is no need to load all the messages again,
             // so otherwise load only the changes,
             // Following if statement does exactly that.
             if(didMessagesLoad === false) {
@@ -145,6 +188,9 @@
                     chatMessagesElement.innerHTML += generateMessageHTML(doc.data(), doc.id);
                 });
                 didMessagesLoad = true;
+                // Send info messages
+                chatMessagesElement.innerHTML += generateMessageHTML(serverMessageCreator("/nick kullaniciadi şeklinde kullanıcı adını tanımlayabilirsin."));
+                chatMessagesElement.innerHTML += generateMessageHTML(serverMessageCreator("You can set your username by using /nick username command"));
                 // Scroll to bottom
                 chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight;
             }else {
@@ -157,6 +203,36 @@
                 if(chatMessagesElement.scrollHeight<200) {chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight}
             }
         });
+
+        const commands = [
+            {
+                name:"nick",
+                execute: (parameters) => {
+                    username = parameters.join("-") + userIdentifier;
+                    localStorage.setItem("username", username)
+                    chatMessagesElement.innerHTML += generateMessageHTML(serverMessageCreator("Komut başarılı, kullanıcı adın artık " + username + " // Command executed, your new username is " + username));
+                }
+            }
+        ]
+
+        function commandManager(message) {
+            // Delete the first character of the string ("/")
+            const parsedMessage = message.slice(1).split(" ");
+            // Get the first item (command name)
+            const commandName = parsedMessage[0];
+            // Delete the first item so the array only contains parameters
+            parsedMessage.shift();
+            const commandParameters = parsedMessage;
+            // If there is such command then execute it
+            if(commands.find(command => command.name === commandName) != undefined) {
+                const command = commands.find(command => command.name === commandName);
+                command.execute(commandParameters)
+                return;
+            }else {
+                chatMessagesElement.innerHTML += generateMessageHTML(serverMessageCreator("Komut bulunamadı // Command not found"));
+            }
+            userMessageInput.value = "";
+        }
 
         const userMessageInput = document.getElementById("message-input");
         const messageSubmitButton = document.getElementById("message-submit-button");
@@ -171,11 +247,13 @@
             if(userMessageInput.value.trim().length < 1) return;
             // Clean the empty spaces, delete HTML tags and define the message
             const messageInputValue = userMessageInput.value.trim().replace(htmlRegex, "");
+            // Check if the message is a command
+            if(messageInputValue.startsWith('/')) {commandManager(messageInputValue); return;}
             // Clear the message input
             userMessageInput.value = "";
             // Add the message to the document
             await addDoc(collection(cloudDatabase, "chat-messages"), {
-                author:"testinput",
+                author:username,
                 message:messageInputValue,
                 isPinned: false,
                 createdAt: Timestamp.fromDate(new Date())
@@ -185,15 +263,15 @@
     <script src="./app.js"></script>
 <!--     
                ▀                    ▀
-    ▄█   ▄█▄  ▄█    ▄▄▄▄███▄▄▄▄    ▄█  
-    ███ ▄███▀ ███  ▄██▀▀▀███▀▀▀██▄ ███  
-    ███▐██▀   ███▌ ███   ███   ███ ███▌ 
+     ▄█   ▄█▄  ▄█    ▄▄▄▄███▄▄▄▄    ▄█  
+     ███ ▄███▀ ███  ▄██▀▀▀███▀▀▀██▄ ███  
+     ███▐██▀   ███▌ ███   ███   ███ ███▌ 
     ▄█████▀    ███▌ ███   ███   ███ ███▌ 
-    ▀▀█████▄    ███▌ ███   ███   ███ ███▌ 
-    ███▐██▄   ███  ███   ███   ███ ███  
-    ███ ▀███▄ ███  ███   ███   ███ ███  
-    ███   ▀█▀ █▀    ▀█   ███   █▀  █▀   
-    ▀                                     
+    ▀█████▄    ███▌ ███   ███   ███ ███▌ 
+      ███▐██▄   ███  ███   ███   ███ ███  
+      ███ ▀███▄ ███  ███   ███   ███ ███  
+      ███   ▀█▀ █▀    ▀█   ███   █▀  █▀   
+      ▀                                     
 -->
 </body>
 </html>
