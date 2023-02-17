@@ -216,7 +216,7 @@
             // Return if the message is sent in the last 6 hours
             // There is no need to do it twice since unsubscribe will list it again
             if(new Date(doc.data().createdAt.seconds*1000) >= msNow-21000000) return;
-            messages.push(doc.data());
+            messages.push({docID: doc.id,data:doc.data()});
             // Add the message to the message container
             sendMessage(generateMessageElement(doc.data(), doc.id));
         })
@@ -227,7 +227,7 @@
             // Following if statement does exactly that.
             if(didMessagesLoad === false) {
                 querySnapshot.forEach((doc) => {
-                    messages.push(doc.data());
+                    messages.push({docID: doc.id,data:doc.data()});
                     // Add the message to the message container
                     sendMessage(generateMessageElement(doc.data(), doc.id));
                 });
@@ -239,9 +239,21 @@
                 chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight;
             }else {
                 querySnapshot.docChanges().forEach(change => {
-                    messages.push(change.doc.data())
-                    // Add the message to the message container
-                    sendMessage(generateMessageElement(change.doc.data(), change.doc.id));
+                    // Check the change type
+                    // Add the message if the change is add;
+                    // if not remove the message
+                    switch (change.type) {
+                        case "added":
+                            messages.push({docID: change.doc.id,data:change.doc.data()})
+                            // Add the message to the message container
+                            sendMessage(generateMessageElement(change.doc.data(), change.doc.id));
+                            break;
+                        case "removed":
+                            const removedMessageIndex = messages.findIndex(message => message.id === change.doc.id);
+                            messages.splice(removedMessageIndex, 1);
+                            document.getElementById(change.doc.id).remove();
+                            break;
+                    }
                 })
                 // Scroll to bottom if the user is allowing you to
                 if(autoScroll===true) {chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight}
