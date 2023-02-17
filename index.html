@@ -148,10 +148,8 @@
 
         // Define a variable to determine if the all the messages loaded initally
         var didMessagesLoad = false;
-
-        // Generate a 6 digit number
+        // Generate a 6 digit number as an identifier
         var userIdentifier = Math.floor(100000 + Math.random() * 900000);
-
         // If localStorage has a username stored, use it. If not then create a new one
         //! Possible security risk:
         // https://stackoverflow.com/a/11247062/9969425
@@ -161,11 +159,6 @@
         // Learn if user previously said the page to stop auto scrolling
         var autoScroll = (localStorage.getItem("autoScroll") === null) ? true : localStorage.getItem("autoScroll");
         const chatMessagesElement = document.getElementById('chat-messages');
-
-        function sendMessage(messageElement) {
-            chatMessagesElement.appendChild(messageElement);
-            if(autoScroll===true) {chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight}
-        }
 
         var htmlRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
         // Following 2 functions return values that are CSS classes, these classes modify the look of the message.
@@ -178,16 +171,6 @@
             }
         }
         const isPinned = (pinValue) => {if(pinValue && pinValue == true) return "isPinned"}
-        // Creates messages from the server 
-        // (yeah I know it's not actually from the server, but It looks better this way)
-        const serverMessageCreator = (message) => {
-            return {
-                author:"server",
-                message: message,
-                isPinned: true,
-                createdAt: Timestamp.fromDate(new Date())
-            }
-        }
         // Turns message createdAt(creation date) to HH:MM:SS format
         // https://stackoverflow.com/a/19346583/9969425
         const formatCreationDate = (docData) => {
@@ -212,9 +195,27 @@
             messageElement.append(hourSpan, authorSpan, messageSpan);
             return messageElement;
         }
+        // Creates messages from the server 
+        // (yeah I know it's not actually from the server, but It looks better this way)
+        const serverMessageCreator = (message) => {
+            return {
+                author:"server",
+                message: message,
+                isPinned: true,
+                createdAt: Timestamp.fromDate(new Date())
+            }
+        }
+        // Single funtion to send messages
+        function sendMessage(messageElement) {
+            chatMessagesElement.appendChild(messageElement);
+            if(autoScroll===true) {chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight}
+        }
         // Get pinned messages
         const pinnedQuerySnapshot = await getDocs(pinnedMessagesQuery);
         pinnedQuerySnapshot.forEach(doc => {
+            // Return if the message is sent in the last 6 hours
+            // There is no need to do it twice since unsubscribe will list it again
+            if(new Date(doc.data().createdAt.seconds*1000) >= msNow-21000000) return;
             messages.push(doc.data());
             // Add the message to the message container
             sendMessage(generateMessageElement(doc.data(), doc.id));
@@ -334,9 +335,10 @@
             userMessageInput.value = "";
             // Check if the message is a command
             if(messageInputValue.startsWith('/')) {commandManager(messageInputValue); return;}
+            // Check if the message has any bad words in it
             const wordsOfMessage = messageInputValue.split(" ");
             if(wordsOfMessage.find(word => engBadWords.includes(word) || trBadWords.includes(word))) {
-                sendMessage(generateMessageElement(serverMessageCreator("Kötü konuşma // Watch your mouth!")));
+                sendMessage(generateMessageElement(serverMessageCreator("Kötü konuşma! // Watch your mouth!")));
                 return;
             }
             // Add the message to the document
