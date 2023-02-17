@@ -61,7 +61,6 @@
         <div class="bottombar">
             <!-- 
                 TODO:
-                    * Add Turkish profanity filter then add English,
                     * Add commands for some easter eggs and backsite gateways.
             -->
             <span><img height="14px" src="./assets/icons/chaticon.png" alt=""> Chat</span>
@@ -99,17 +98,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getFirestore, doc, collection, query, orderBy, onSnapshot, getDoc, addDoc, Timestamp, where } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"
-
-        // var userIpAdress;
-        // axios.get('https://api.ipify.org', {"Content-Type": "application/json"})
-        //     .then(function (response) {
-        //         userIpAdress = response.data
-        //         console.log(response.data);
-        //     })
-        //     .catch(function (error) {
-        //         console.log(error);
-        //     })
+        import { getFirestore, doc, collection, query, orderBy, onSnapshot, getDoc, addDoc, Timestamp, where } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
         var engBadWords = [];
         var trBadWords = [];
@@ -159,7 +148,12 @@
         const q = query(collection(cloudDatabase, "chat-messages"), orderBy("createdAt", "asc"));
         // Define a variable to determine if the all the messages loaded initally
         var didMessagesLoad = false;
+        // Generate a 6 digit number
         var userIdentifier = Math.floor(100000 + Math.random() * 900000);
+        // If localStorage has a username stored, use it. If not then create a new one
+        //! Possible security risk:
+        // https://stackoverflow.com/a/11247062/9969425
+        // What if the user edits localStorage and pretends as an admin, server etc.
         var username = (localStorage.getItem("username") === null) ? "Anonim" + userIdentifier : localStorage.getItem("username");
         const chatMessagesElement = document.getElementById('chat-messages');
 
@@ -175,6 +169,8 @@
             }
         }
         const isPinned = (pinValue) => {if(pinValue && pinValue == true) return "isPinned"}
+        // Creates messages from the server 
+        // (yeah I know it's not actually from the server, but It looks better this way)
         const serverMessageCreator = (message) => {
             return {
                 author:"server",
@@ -184,10 +180,12 @@
             }
         }
         // Turns message createdAt(creation date) to HH:MM:SS format
+        // https://stackoverflow.com/a/19346583/9969425
         const formatCreationDate = (docData) => {
             const messageTime = new Date(docData.createdAt.seconds*1000).toTimeString().split(' ')[0];
             return messageTime
         }
+        // Create message element
         function generateMessageElement(docData, messageId) {
             if(messageId == undefined) messageId = "";
             const messageElement = document.createElement("div");
@@ -199,11 +197,11 @@
             hourSpan.classList.add("message-hour");
             authorSpan.classList.add("message-author");
             messageSpan.classList.add("message");
-            hourSpan.innerHTML = `[${formatCreationDate(docData)}]`
-            authorSpan.innerHTML = `[<span class="${isKnownUser(docData.author)}">${docData.author}</span>]: `
-            messageSpan.innerHTML = docData.message
-            messageElement.append(hourSpan, authorSpan, messageSpan)
-            return messageElement
+            hourSpan.innerHTML = `[${formatCreationDate(docData)}]`;
+            authorSpan.innerHTML = `[<span class="${isKnownUser(docData.author)}">${docData.author}</span>]: `;
+            messageSpan.innerHTML = docData.message;
+            messageElement.append(hourSpan, authorSpan, messageSpan);
+            return messageElement;
         }
         // Triggers when collection is changed whether by a new document or by an updated one
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -242,6 +240,8 @@
                 name:"nick",
                 // Params: <user-name>
                 execute: (parameters, isFromInside) => {
+                    // Do not add the 6 digit identifier if the function is called from within
+                    // Otherwise add the identifier
                     username = (isFromInside != undefined && isFromInside === true) ? parameters.join("-") : parameters.join("-") + userIdentifier;
                     localStorage.setItem("username", username);
                     chatMessagesElement.appendChild(generateMessageElement(serverMessageCreator("Komut başarılı, kullanıcı adın artık " + username + " // Command executed, your new username is " + username)));
@@ -253,16 +253,20 @@
                 execute: async (parameters) => {
                     const paramUsername = parameters[0];
                     const availableUsers = ["admin", "server"];
+                    // Do not read the db if the user is not recognized
                     if(!availableUsers.includes(paramUsername)) {
                         chatMessagesElement.appendChild(generateMessageElement(serverMessageCreator("Böyle bir kullanıcı yok! // User does not exist!")));
                         return;
                     }
+                    // Hash the password
                     const paramPassword = MD5(parameters[1]);
                     const userRef = doc(cloudDatabase, "important-users", paramUsername);
                     const userDoc = await getDoc(userRef);
+                    // Change the nickname if the passwords match
                     if(userDoc.data().password === paramPassword) {
                         commands.find(command => command.name === "nick").execute([userDoc.data().username], true);
                     }else {
+                        // If not then send the guard dog
                         chatMessagesElement.appendChild(generateMessageElement(serverMessageCreator(sussybaki)));
                     }
                 }
@@ -281,6 +285,7 @@
             if(commands.find(command => command.name === commandName) != undefined) {
                 const command = commands.find(command => command.name === commandName);
                 command.execute(commandParameters)
+                chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight;
                 return;
             }else {
                 chatMessagesElement.appendChild(generateMessageElement(serverMessageCreator("Komut bulunamadı // Command not found")));
