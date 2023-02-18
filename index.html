@@ -158,6 +158,7 @@
         const chatMessagesElement = document.getElementById('chat-messages');
 
         var htmlRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
+        var lastSixDigitsRegex = /\d{1,6}(?=[^\d]*$)/;
         // Following 2 functions return values that are CSS classes, these classes modify the look of the message.
         const isKnownUser = (name) => {
             switch (name) {
@@ -317,18 +318,23 @@
             // If there is a username then check if the user is a known one,
             // try to login if the user is valid
             const storedUsername = localStorage.getItem("username");
+            // Login command does not return anything so there is no way to know if the login is failed,
+            // because of this the following line assings the user an username all the time 
+            // because if the login fails then the user won't have a username
+            username = "Anonim" + userIdentifier;
             if(availableUsers.find(user => user.nick === localStorage.getItem("username"))) {
-                // Login command does not return anything so there is no way to know if the login is failed,
-                // because of this the following line assings the user an username all the time 
-                // because if the login fails then the user won't have a username
-                username = "Anonim" + userIdentifier;
                 if(localStorage.getItem("password") != null) {
-                    commands.find(command => command.name === "login").execute([availableUsers.find(user => user.nick === storedUsername).title, localStorage.getItem("password")])
+                    commands.find(command => command.name === "login").execute([availableUsers.find(user => user.nick === storedUsername).title, localStorage.getItem("password")]);
                 }else {
-                    localStorage.setItem("username", username)
-                    commands.find(command => command.name === "login").execute([availableUsers.find(user => user.nick === storedUsername).title, "try-harder"])
+                    localStorage.setItem("username", username);
+                    commands.find(command => command.name === "login").execute([availableUsers.find(user => user.nick === storedUsername).title, "try-harder"]);
                 }
-            }else {username = storedUsername}
+            }else {
+                // Set the username if it has the 6 digit identifier (userIdentifier)
+                if(storedUsername.match(lastSixDigitsRegex) && storedUsername.match(lastSixDigitsRegex).length === 6) {
+                    username = storedUsername;
+                }
+            }
         }
 
         function commandManager(message) {
