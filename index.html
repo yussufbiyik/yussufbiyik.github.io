@@ -63,11 +63,8 @@
                 TODO:
                     * Implement database manipulation from the ui
                     * Add messsage pinning functionality
-                    * Check the localStorage security concern (see line 155)
-                    one way of authing without extra prompts when the localStorage has a known username would be
-                    adding the password to the localStorage and trying to login with the stored pass
-                    this might prevent the issue since if the user modified the localStorage on their own they will still need a password
                     * Prevent db access domains other than the ones that I allow
+                    * Prevent multiple db reads when logins fail
                     * Add commands for some easter eggs and backsite gateways.
             -->
             <span><img height="14px" src="./assets/icons/chaticon.png" alt=""> Chat</span>
@@ -146,6 +143,7 @@
         const cloudDatabase = getFirestore(fireApp);
         const msNow = Date.now();
         const nowTimestamp = Timestamp.fromDate(new Date(msNow-21600000))
+        const availableUsers = [{title:"admin", nick:"yusufbiyik"}, {title:"server", nick:"server"}];
         const messages = [];
         // List chat messages in ascending order of creation date
         const messagesFromLastSixHoursQuery = query(collection(cloudDatabase, "chat-messages"), where("createdAt", ">=", nowTimestamp), orderBy("createdAt", "asc"));
@@ -154,13 +152,6 @@
 
         // Define a variable to determine if the all the messages loaded initally
         var didMessagesLoad = false;
-        // Generate a 6 digit number as an identifier
-        var userIdentifier = Math.floor(100000 + Math.random() * 900000);
-        // If localStorage has a username stored, use it. If not then create a new one
-        //! Possible security risk:
-        // https://stackoverflow.com/a/11247062/9969425
-        // What if the user edits localStorage and pretends as an admin, server etc.
-        var username = (localStorage.getItem("username") === null) ? "Anonim" + userIdentifier : localStorage.getItem("username");
 
         // Learn if user previously said the page to stop auto scrolling
         var autoScroll = (localStorage.getItem("autoScroll") === null) ? true : localStorage.getItem("autoScroll");
@@ -239,8 +230,8 @@
                 });
                 didMessagesLoad = true;
                 // Send info messages
-                sendMessage(generateMessageElement(serverMessageCreator("/nick kullaniciadi şeklinde kullanıcı adını tanımlayabilirsin.")));
-                sendMessage(generateMessageElement(serverMessageCreator("You can set your username by using /nick username command")));
+                sendMessage(generateMessageElement(serverMessageCreator("/nick kullaniciadi şeklinde kullanıcı adını tanımlayabilirsin, kullanıcı adın: " + username)));
+                sendMessage(generateMessageElement(serverMessageCreator("You can set your username by using /nick username command, your username is: " + username)));
                 // Scroll to bottom
                 chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight;
             }else {
@@ -294,20 +285,20 @@
                 name:"login",
                 // Params: <username> <password>
                 execute: async (parameters) => {
-                    const paramUsername = parameters[0];
-                    const availableUsers = ["admin", "server"];
+                    const paramUserTitle = parameters[0];
                     // Do not read the db if the user is not recognized
-                    if(!availableUsers.includes(paramUsername)) {
+                    if(!availableUsers.find(user=> user.title === paramUserTitle)) {
                         sendMessage(generateMessageElement(serverMessageCreator("Böyle bir kullanıcı yok! // User does not exist!")));
                         return;
                     }
                     // Hash the password
                     const paramPassword = MD5(parameters[1]);
-                    const userRef = doc(cloudDatabase, "important-users", paramUsername);
+                    const userRef = doc(cloudDatabase, "important-users", paramUserTitle);
                     const userDoc = await getDoc(userRef);
                     // Change the nickname if the passwords match
                     if(userDoc.data().password === paramPassword) {
                         commands.find(command => command.name === "nick").execute([userDoc.data().username], true);
+                        localStorage.setItem("password", parameters[1]);
                     }else {
                         // If not then send the guard dog
                         sendMessage(generateMessageElement(serverMessageCreator(sussybaki)));
@@ -315,6 +306,30 @@
                 }
             }
         ]
+
+        // Generate a 6 digit number as an identifier
+        var userIdentifier = Math.floor(100000 + Math.random() * 900000);
+        var username;
+        // If localStorage has a username stored, use it. If not then create a new one
+        if(localStorage.getItem("username") === null) {
+            username = "Anonim" + userIdentifier;
+        } else {
+            // If there is a username then check if the user is a known one,
+            // try to login if the user is valid
+            const storedUsername = localStorage.getItem("username");
+            if(availableUsers.find(user => user.nick === localStorage.getItem("username"))) {
+                // Login command does not return anything so there is no way to know if the login is failed,
+                // because of this the following line assings the user an username all the time 
+                // because if the login fails then the user won't have a username
+                username = "Anonim" + userIdentifier;
+                if(localStorage.getItem("password") != null) {
+                    commands.find(command => command.name === "login").execute([availableUsers.find(user => user.nick === storedUsername).title, localStorage.getItem("password")])
+                }else {
+                    localStorage.setItem("username", username)
+                    commands.find(command => command.name === "login").execute([availableUsers.find(user => user.nick === storedUsername).title, "try-harder"])
+                }
+            }else {username = storedUsername}
+        }
 
         function commandManager(message) {
             // Delete the first character of the string ("/")
