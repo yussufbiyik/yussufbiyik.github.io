@@ -61,8 +61,6 @@
         <div class="bottombar">
             <!-- 
                 TODO:
-                    * Implement database manipulation from the ui
-                    * Add messsage pinning functionality
                     * Prevent db access from domains other than the ones that I allow
                     * Prevent multiple db reads when logins fail
                     * Add commands for some easter eggs and backsite gateways.
@@ -102,7 +100,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getFirestore, doc, collection, query, orderBy, onSnapshot, getDoc, addDoc, Timestamp, where, getDocs } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+        import { getFirestore, doc, collection, query, orderBy, onSnapshot, getDoc, addDoc, Timestamp, where, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
         var engBadWords = [], trBadWords = [];
         // Get bad words via axios
@@ -341,6 +339,45 @@
                         // If not then send the guard dog
                         sendMessage(generateMessageElement(serverMessageCreator(sussybaki)));
                     }
+                }
+            },
+            {
+                name: "pin",
+                isPrivate: true,
+                usage: "/pin message-id",
+                execute: async (parameters) => {
+                    if(!availableUsers.find(user => user.nick === username)) return;
+                    const messageId = parameters[0];
+                    const messageRef = doc(cloudDatabase, "chat-messages", messageId);
+                    await updateDoc(messageRef, {
+                        isPinned: true
+                    })
+                }
+            },
+            {
+                name: "modify",
+                isPrivate: true,
+                usage: "/pin message-id content",
+                execute: async (parameters) => {
+                    if(!availableUsers.find(user => user.nick === username)) return;
+                    const messageId = parameters[0];
+                    parameters.shift();
+                    const newMessageContent = parameters.join(" ");
+                    const messageRef = doc(cloudDatabase, "chat-messages", messageId);
+                    await updateDoc(messageRef, {
+                        message: newMessageContent
+                    })
+                }
+            },
+            {
+                name: "delete",
+                isPrivate: true,
+                usage: "/delete message-id",
+                execute: async (parameters) => {
+                    if(!availableUsers.find(user => user.nick === username)) return;
+                    const messageId = parameters[0];
+                    const messageRef = doc(cloudDatabase, "chat-messages", messageId);
+                    await deleteDoc(messageRef)
                 }
             },
             {
