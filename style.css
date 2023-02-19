@@ -231,6 +231,7 @@ select {
     margin: 1px 0px;
     border: solid rgba(255, 255, 255, 0.1);
     border-width: 1px 0;
+    position: relative;
 }
 
 .message {

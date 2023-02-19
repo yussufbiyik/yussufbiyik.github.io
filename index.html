@@ -357,7 +357,7 @@
             {
                 name: "modify",
                 isPrivate: true,
-                usage: "/pin message-id content",
+                usage: "/modify message-id content",
                 execute: async (parameters) => {
                     if(!availableUsers.find(user => user.nick === username)) return;
                     const messageId = parameters[0];
