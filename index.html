@@ -207,7 +207,7 @@
         // Single funtion to send messages
         function sendMessage(messageElement) {
             chatMessagesElement.appendChild(messageElement);
-            if(autoScroll===true) {chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight}
+            if(autoScroll===true) {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
         }
         // Get pinned messages
         const pinnedQuerySnapshot = await getDocs(pinnedMessagesQuery);
@@ -235,7 +235,7 @@
                 sendMessage(generateMessageElement(serverMessageCreator("/nick kullaniciadi şeklinde kullanıcı adını tanımlayabilirsin, kullanıcı adın: " + username)));
                 sendMessage(generateMessageElement(serverMessageCreator("You can set your username by using /nick username command, your username is: " + username)));
                 // Scroll to bottom
-                chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight;
+                chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
             }else {
                 querySnapshot.docChanges().forEach(change => {
                     // Check the change type
@@ -274,7 +274,7 @@
                     }
                 })
                 // Scroll to bottom if the user is allowing you to
-                if(autoScroll===true) {chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight}
+                if(autoScroll===true) {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
             }
         });
 
@@ -442,7 +442,7 @@
             if(commands.find(command => command.name === commandName) != undefined) {
                 const command = commands.find(command => command.name === commandName);
                 command.execute(commandParameters)
-                chatMessagesElement.scrollTop = chatMessagesElement.offsetHeight;
+                chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
                 return;
             }else {
                 sendMessage(generateMessageElement(serverMessageCreator("Komut bulunamadı // Command not found")));
