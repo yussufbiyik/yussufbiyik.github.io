@@ -58,14 +58,13 @@
                 </div>
             </div>
         </div>
-        <div class="bottombar">
+        <details class="bottombar">
             <!-- 
                 TODO:
-                    * Prevent db access from domains other than the ones that I allow
                     * Prevent multiple db reads when logins fail
                     * Add commands for some easter eggs and backsite gateways.
             -->
-            <span><img height="14px" src="./assets/icons/chaticon.png" alt=""> Chat</span>
+            <summary><img height="14px" src="./assets/icons/chaticon.png" alt=""> Chat</summary>
             <div id="chat-box">
                 <div id="chat-messages"></div>
                 <div id="chat-input-container">
@@ -73,7 +72,7 @@
                     <button id="message-submit-button">→</button>
                 </div>
             </div>
-        </div>
+        </details>
     </div>
     <svg id="svg-filter" width='300' height='300' style="display: none;">
         <filter id='noiseFilter'>
@@ -124,9 +123,10 @@
             })
         }
         getBadWords()
-
         // I learnt that this was okay to expose
         // https://stackoverflow.com/a/37484053/9969425
+        // Database is secured thanks to the following article:
+        // https://medium.com/@devesu/how-to-secure-your-firebase-project-even-when-your-api-key-is-publicly-available-a462a2a58843
         const firebaseConfig = {
             apiKey: "AIzaSyCqIOggNSBuMQlH-MVzbKTq7ebc6ZWVWL8",
             authDomain: "yusufbiyik-4a3c4.firebaseapp.com",
@@ -179,16 +179,19 @@
             messageElement.classList.add("chat-message");
             if(docData.isPinned === true) messageElement.classList.add("isPinned") 
             messageElement.id = messageId;
+            const hourAuthorContainer = document.createElement("div");
             const hourSpan = document.createElement("span");
             const authorSpan = document.createElement("span");
             const messageSpan = document.createElement("span");
+            hourAuthorContainer.classList.add("hour-author-container");
             hourSpan.classList.add("message-hour");
             authorSpan.classList.add("message-author");
             messageSpan.classList.add("message");
             hourSpan.innerHTML = `[${formatCreationDate(docData)}]`;
             authorSpan.innerHTML = `[<span class="${isKnownUser(docData.author)}">${docData.author}</span>]: `;
             messageSpan.innerHTML = docData.message;
-            messageElement.append(hourSpan, authorSpan, messageSpan);
+            hourAuthorContainer.append(hourSpan, authorSpan)
+            messageElement.append(hourAuthorContainer, messageSpan);
             return messageElement;
         }
         // Creates messages from the server 
