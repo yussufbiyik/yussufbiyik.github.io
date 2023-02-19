@@ -63,7 +63,7 @@
                 TODO:
                     * Implement database manipulation from the ui
                     * Add messsage pinning functionality
-                    * Prevent db access domains other than the ones that I allow
+                    * Prevent db access from domains other than the ones that I allow
                     * Prevent multiple db reads when logins fail
                     * Add commands for some easter eggs and backsite gateways.
             -->
@@ -265,7 +265,13 @@
         const commands = [
             {
                 name:"nick",
-                // Params: <user-name>
+                isPrivate: false,
+                // Params: <nick-name>
+                usage: `/nick nickname`,
+                description: {
+                    eng:"Use this command to set your nickname.",
+                    tr:"Kullanıcı adı belirleme komutu."
+                },
                 execute: (parameters, isFromInside) => {
                     // Do not add the 6 digit identifier if the function is called from within
                     // Otherwise add the identifier
@@ -276,6 +282,12 @@
             },
             {
                 name:"scroll",
+                isPrivate: false,
+                usage: `/scroll`,
+                description: {
+                    eng:"Toggles auto scrolling when a new message comes.",
+                    tr:"Yeni mesaj gelince sohbeti en aşağıya çekmeyi açıp kapatır."
+                },
                 execute: () => {
                     autoScroll = !autoScroll;
                     localStorage.setItem("autoScroll", autoScroll);
@@ -284,7 +296,13 @@
             },
             {
                 name:"login",
-                // Params: <username> <password>
+                isPrivate: true,
+                // Params: <nickname> <password>
+                usage: `/login nickname password`,
+                description: {
+                    eng:"Allows you to log into a registered account",
+                    tr:"Kayıtlı bir hesaba girişini sağlar."
+                },
                 execute: async (parameters) => {
                     const paramUserTitle = parameters[0];
                     // Do not read the db if the user is not recognized
@@ -304,6 +322,22 @@
                         // If not then send the guard dog
                         sendMessage(generateMessageElement(serverMessageCreator(sussybaki)));
                     }
+                }
+            },
+            {
+                name:"help",
+                isPrivate: false,
+                usage: "/help",
+                description: {
+                    eng:"Lists commands",
+                    tr:"Komutları listeler"
+                },
+                execute: () => {
+                    let returnMessage = "";
+                    commands.filter(command => command.isPrivate === false).forEach(command => {
+                        returnMessage += `${command.usage}:\n ${command.description[currentLanguage]}\n`
+                    })
+                    sendMessage(generateMessageElement(serverMessageCreator(returnMessage)))
                 }
             }
         ]
@@ -370,6 +404,9 @@
             if(userMessageInput.value.trim().length < 1) return;
             // Clean the empty spaces, delete HTML tags and define the message
             const messageInputValue = userMessageInput.value.trim().replace(htmlRegex, "");
+            // Check again if the message becomes empty after the cleaning
+            // <!-- --> makes the message empty
+            if(messageInputValue.length < 1) return;
             // Clear the message input
             userMessageInput.value = "";
             // Check if the message is a command
