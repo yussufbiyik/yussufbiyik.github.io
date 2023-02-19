@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400&display=swap');
 
 * {
     box-sizing: border-box;
@@ -15,6 +16,8 @@
 
     --turkish-flag: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFwAAABcCAMAAADUMSJqAAAAbFBMVEXjChf////iAADjABHjAA3jBRTiAAf96On619n97O385Ob+9fb+8vPnQUf2wcPmLjf1rLD73d/5yszqX2TmNz7lGCbwjpLvhorzpqntcXftaW/mJzHpSVDrWWH/+vvkEx/3ur7vfoPzmp/pUFa6+WgqAAACcklEQVRoge1Y27ZjQBClbwjaJRFNIkj+/x8Hc06WIlqn8TBrej+zV3XVrqtlGRgYGBgY/JeghKE3GKY7UmNkhWUep4lzclPRni8Y7URPCcquqWOPkDS5hcgO3ISGjW/PEMQRw1vNRlHzmFMP9OKGtpnNcuczdY9TiTYYzy7NjNF3eZwXZZHHPLFFpu15dHOn1N6zit6SjM4ivmnazu7ehNpte5G/P8AMsarW445OkPrxzOYRxFrkJJtwJ+GW8AFQGkPuNNomvDFQPuG29sjIv8AZzEpXX3NzIOgU787W7VGtZawKAHm57u/6nCmyIwEdTlb/oxa/qkWcMsAdVOtOoTVXeV8HVELDFVoDzVLbiX6jTiUBQLCmKERzILdd3KcZZai+LwYAw8T3VHoaHoqcYH2rPYu0WSRHBegPsYorcZT03+Zhwf2H7d8X0wJdgVdaNfLhtT9WSYQDheifFVxOUDiqz2m97EgC+s8pXMt8itD9OdKA/1o2hxI+Jk8ieaXtQlimoK3IsolioERXntZ1GU8mD2lafEduFSnktrmU/Fu30KsLjJfK6/uAslKM5hsvlOjreyn2ehnFlFNJaYFJlKskEQElQ+KYDen/fF2d7ufgsuhK/cLVWF3durVNwpclpltynaGN427QqyTkes0iCH8diCV9UbPNtQovtLQaNOVCcSQjLzhaFAqjRaE6Whw6FB07zh06iHZ198AR+tDh/9PaInZbW9QWLlzp2v5hVQxmq6L2hYFE8ZR9tyV3bT1PNq3nK4eFerM4Cf54EvHEZfNJxPo55vBjjjk9xmco3p+hyF5nqAEHHtAMDAwMDAz+efwB0E8ihXq+a9gAAAAASUVORK5CYII=');
     --english-flag: url('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Square_Flag_of_the_United_Kingdom.svg/1200px-Square_Flag_of_the_United_Kingdom.svg.png');
+
+    --chat-font: 'Inconsolata', monospace;
 }
 
 html, body {
@@ -184,6 +187,96 @@ select {
     align-items: center;
     grid-auto-flow: column;
 }
+
+.bottombar {
+    padding: 30px;
+    gap: 10px;
+    display: grid;
+    align-items: center;
+    grid-auto-flow: row;
+
+    bottom: 0;
+    position: sticky;
+    border: var(--default-border-settings);
+    border-bottom: none;
+    backdrop-filter: brightness(0.35) blur(1px);
+}
+
+summary::-webkit-details-marker {display:none;}
+summary::marker {display:none;}
+summary {cursor: pointer;list-style: none;outline: none;}
+
+#chat-box {
+    width: 100%;
+    display: grid;
+    grid-template-rows: 150px auto;
+    border: var(--default-border-settings);
+    margin-top: 10px;
+}
+
+details[open] {
+    padding-top: 15px;
+}
+
+#chat-box * {
+    /* font-size: 14pt; */
+    font-family: serif !important;
+    font-family: var(--chat-font) !important;
+    font-smooth: never;
+}
+
+#chat-messages {
+    padding: 5px;
+    
+    gap: 1px;
+    display: grid;
+    overflow-y: scroll;
+    grid-auto-flow: row;
+    max-height: -webkit-fill-available;
+}
+
+#chat-messages:nth-child(1) {margin-top: auto}
+
+.chat-message {
+    gap: 1px;
+    display: grid;
+    justify-content: start;
+    grid-auto-flow: column;
+    margin: 1px 0px;
+    border: solid rgba(255, 255, 255, 0.1);
+    border-width: 1px 0;
+    position: relative;
+}
+
+.message {
+    white-space: break-spaces;
+}
+
+.isAdmin {background-color: rgba(255, 0, 0, 0.5);}
+.isServer {background-color: rgba(0, 0, 255, 0.5);}
+.isPinned {background-color: rgba(255, 255, 255, 0.1);}
+
+.hour-author-container {
+    display: grid;
+    justify-content: start;
+    grid-auto-flow: column;
+}
+
+#chat-input-container {
+    gap: 5px;
+    display: grid;
+    height: 40px;
+    grid-template-columns: auto 40px;
+}
+
+#chat-input-container input, button {
+    background: transparent;
+    border: var(--default-border-settings);
+    color: white;
+}
+#chat-input-container input {padding-left: 5px;border-bottom: none;border-left: none;}
+#chat-input-container input:focus {outline: none;}
+#chat-input-container button {font-size: 16pt; cursor: pointer;border-bottom: none;border-right: none;}
 
 .container > div {
     width: 100%;
@@ -395,6 +488,10 @@ select {
         justify-items: stretch;
         justify-content: normal;
     }
+
+    .bottombar{padding: 10px;}
+    .chat-message {grid-auto-flow: row;}
+    .message {padding-left: 5px;}
 
     .content {
         padding: 10px;
