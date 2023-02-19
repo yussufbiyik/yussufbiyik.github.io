@@ -168,7 +168,6 @@
                     return "isServer"
             }
         }
-        const isPinned = (pinValue) => {if(pinValue && pinValue == true) return "isPinned"}
         // Turns message createdAt(creation date) to HH:MM:SS format
         // https://stackoverflow.com/a/19346583/9969425
         const formatCreationDate = (docData) => {
@@ -179,7 +178,8 @@
         function generateMessageElement(docData, messageId) {
             if(messageId == undefined) messageId = "";
             const messageElement = document.createElement("div");
-            messageElement.classList.add("chat-message", isPinned(docData.isPinned));
+            messageElement.classList.add("chat-message");
+            if(docData.isPinned === true) messageElement.classList.add("isPinned") 
             messageElement.id = messageId;
             const hourSpan = document.createElement("span");
             const authorSpan = document.createElement("span");
