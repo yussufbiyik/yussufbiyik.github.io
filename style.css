@@ -274,9 +274,9 @@ details[open] {
     border: var(--default-border-settings);
     color: white;
 }
-#chat-input-container input {padding-left: 5px;}
+#chat-input-container input {padding-left: 5px;border-bottom: none;border-left: none;}
 #chat-input-container input:focus {outline: none;}
-#chat-input-container button {font-size: 16pt; cursor: pointer;}
+#chat-input-container button {font-size: 16pt; cursor: pointer;border-bottom: none;border-right: none;}
 
 .container > div {
     width: 100%;
