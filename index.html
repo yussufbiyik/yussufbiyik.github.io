@@ -242,11 +242,30 @@
                     // if not remove the message
                     switch (change.type) {
                         case "added":
+                            // Add the message to the messages array
                             messages.push({docID: change.doc.id,data:change.doc.data()})
                             // Add the message to the message container
                             sendMessage(generateMessageElement(change.doc.data(), change.doc.id));
                             break;
+                        case "modified":
+                            // Find the message from both the messages array and the html
+                            const modifiedMessageIndex = messages.findIndex(message => message.docID === change.doc.id);
+                            const modifiedMessageElement = document.getElementById(change.doc.id);
+                            // Assign old and new versions to a variable
+                            const newMessageData = change.doc.data()
+                            const oldMessageData = messages[modifiedMessageIndex].data;
+                            // Compare the old and new then modify the old data
+                            if(oldMessageData.isPinned != newMessageData.isPinned) {
+                                modifiedMessageElement.classList.toggle("isPinned")
+                            }
+                            if(oldMessageData.message != newMessageData.message) {
+                                Array.from(modifiedMessageElement.children).find(child => child.classList.contains("message")).innerHTML = newMessageData.message
+                            }
+                            messages[modifiedMessageIndex].data = change.doc.data()
+                            break;
                         case "removed":
+                            // Find the message from both the messages array and the html
+                            // then delete them both
                             const removedMessageIndex = messages.findIndex(message => message.id === change.doc.id);
                             messages.splice(removedMessageIndex, 1);
                             document.getElementById(change.doc.id).remove();
