@@ -214,6 +214,15 @@ summary {cursor: pointer;list-style: none;outline: none;}
     margin-top: 10px;
 }
 
+#message-count {
+    padding: 1px 4px;
+    margin-left: 5px;
+    border-radius: 5px;
+
+    color: var(--hover-border-color);
+    background-color: var(--background-color);
+}
+
 details[open] {
     padding-top: 15px;
 }

@@ -64,7 +64,7 @@
                     * Prevent multiple db reads when logins fail
                     * Add commands for some easter eggs and backsite gateways.
             -->
-            <summary><img height="14px" src="./assets/icons/chaticon.png" alt=""> Chat</summary>
+            <summary><img height="14px" src="./assets/icons/chaticon.png" alt=""> Chat <span id="message-count"></span></summary>
             <div id="chat-box">
                 <div id="chat-messages"></div>
                 <div id="chat-input-container">
@@ -219,6 +219,8 @@
             // Add the message to the message container
             sendMessage(generateMessageElement(doc.data(), doc.id));
         })
+        // Get message count indicator tag
+        const messageCount = document.getElementById("message-count");
         // Triggers when collection is changed whether by a new document or by an updated one
         const unsubscribe = onSnapshot(messagesFromLastSixHoursQuery, (querySnapshot) => {
             // If messages were initally loaded, then there is no need to load all the messages again,
@@ -227,6 +229,7 @@
             if(didMessagesLoad === false) {
                 querySnapshot.forEach((doc) => {
                     messages.push({docID: doc.id,data:doc.data()});
+                    messageCount.innerText = messages.length;
                     // Add the message to the message container
                     sendMessage(generateMessageElement(doc.data(), doc.id));
                 });
@@ -247,6 +250,7 @@
                             messages.push({docID: change.doc.id,data:change.doc.data()})
                             // Add the message to the message container
                             sendMessage(generateMessageElement(change.doc.data(), change.doc.id));
+                            messageCount.innerText = messages.length;
                             break;
                         case "modified":
                             // Find the message from both the messages array and the html
@@ -269,6 +273,7 @@
                             // then delete them both
                             const removedMessageIndex = messages.findIndex(message => message.id === change.doc.id);
                             messages.splice(removedMessageIndex, 1);
+                            messageCount.innerText = messages.length;
                             document.getElementById(change.doc.id).remove();
                             break;
                     }
