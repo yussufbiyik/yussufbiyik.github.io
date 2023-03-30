@@ -214,6 +214,10 @@ summary {cursor: pointer;list-style: none;outline: none;}
     margin-top: 10px;
 }
 
+#chat-box img {
+    max-width: 200px;
+}
+
 #message-count {
     padding: 1px 4px;
     margin-left: 5px;
