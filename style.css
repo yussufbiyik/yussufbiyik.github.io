@@ -219,6 +219,7 @@ summary {cursor: pointer;list-style: none;outline: none;}
     margin-left: 5px;
     border-radius: 5px;
 
+    user-select: none;
     color: var(--hover-border-color);
     background-color: var(--background-color);
 }
