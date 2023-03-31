@@ -495,7 +495,7 @@
                 await addDoc(collection(cloudDatabase, "chat-messages"), {
                     author:"server",
                     message: blitzHimym,
-                    isPinned: true,
+                    isPinned: false,
                     createdAt: Timestamp.fromDate(new Date())
                 })
             }
