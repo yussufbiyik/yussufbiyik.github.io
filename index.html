@@ -236,7 +236,7 @@
                     messages.push({docID: doc.id,data:doc.data()});
                     messageCount.innerText = messages.length;
                     // Add the message to the message container
-                    sendMessage(generateMessageElement(doc.data(), doc.id));
+                    sendMessage(generateMessageElement(doc.data(), doc.id), doc.data().message.split(" "));
                 });
                 didMessagesLoad = true;
                 // Send info messages
