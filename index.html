@@ -205,8 +205,13 @@
             }
         }
         // Single funtion to send messages
-        function sendMessage(messageElement) {
+        async function sendMessage(messageElement, wordsOfMessage) {
             chatMessagesElement.appendChild(messageElement);
+            // Some little code to give server side responses without bothering the database
+            // (it used to send this message to db to display for each user)
+            if(wordsOfMessage != undefined) {
+                if(wordsOfMessage.find(word => word === "aw")) chatMessagesElement.appendChild(generateMessageElement(serverMessageCreator(blitzHimym)));
+            }
             if(autoScroll===true) {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
         }
         // Get pinned messages
@@ -249,7 +254,7 @@
                             // Add the message to the messages array
                             messages.push({docID: change.doc.id,data:change.doc.data()})
                             // Add the message to the message container
-                            sendMessage(generateMessageElement(change.doc.data(), change.doc.id));
+                            sendMessage(generateMessageElement(change.doc.data(), change.doc.id), change.doc.data().message.split(" "));
                             messageCount.innerText = messages.length;
                             break;
                         case "modified":
@@ -489,16 +494,6 @@
                 isPinned: false,
                 createdAt: Timestamp.fromDate(new Date())
             })
-            if(wordsOfMessage.find(word => word === "aw")) {
-                // sendMessage(generateMessageElement(serverMessageCreator(blitzHimym)));
-                // Add the message to the document
-                await addDoc(collection(cloudDatabase, "chat-messages"), {
-                    author:"server",
-                    message: blitzHimym,
-                    isPinned: false,
-                    createdAt: Timestamp.fromDate(new Date())
-                })
-            }
         }
     </script>
     <script src="./app.js"></script>
