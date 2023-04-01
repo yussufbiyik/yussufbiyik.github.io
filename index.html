@@ -203,7 +203,8 @@
             const toolboxButtonEdit = document.createElement("button");
             const toolboxButtonDelete = document.createElement("button");
             toolboxButtonReply.onclick = () => {
-                userMessageInput.value = `[reply]${messageId}[/reply] yanıtın`
+                userMessageInput.value = `[reply]${messageId}[/reply] yanıtın`;
+                userMessageInput.focus()
             }
             toolboxButtonId.onclick = () => {
                 navigator.clipboard.writeText(messageId ? messageId : "internal message");
