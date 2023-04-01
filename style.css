@@ -148,6 +148,50 @@ select {
     height: 100%;
 }
 
+.toolbox-container {
+    gap: 1px;
+    display: grid;
+    grid-auto-flow: column;
+    align-content: center;
+    position: absolute;
+    
+    right:0;
+    top: 1px;
+}
+.toolbox-container button {
+    aspect-ratio: 1/1;
+    width: 14px;
+    padding: 7px;
+
+    cursor: pointer;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.toolbox-button-reply{
+    background-image: url("./assets/icons/replyicon.png");
+}
+.toolbox-button-id{
+    background-image: url("./assets/icons/copyicon.png");
+}
+.toolbox-button-pin{
+    background-image: url("./assets/icons/pinicon.png");
+}
+.toolbox-button-edit{
+    background-image: url("./assets/icons/editicon.png");
+}
+.toolbox-button-delete{
+    background-image: url("./assets/icons/trashicon.png");
+}
+
+.reply {
+    display: initial;
+    font-size: initial;
+    background: var(--background-color);
+    color: var(--hover-border-color);
+    padding: 0;
+    line-height: initial;
+}
+
 .content {  
     display: grid;
     grid-auto-flow: column;
@@ -263,6 +307,7 @@ details[open] {
 }
 
 .message {
+    margin-right: 80px;
     white-space: break-spaces;
 }
 

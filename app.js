@@ -136,7 +136,10 @@ function changeLanguage(languageName) {
     yetkinliklerimButton.innerText = leftSideContent.yetkinliklerimButton[currentLanguage];
     pixelArtButton.innerText = leftSideContent.pixelArtButton[currentLanguage];
     ModellemeRenderlarButton.innerText = leftSideContent.ModellemeRenderlarButton[currentLanguage];
-    loadContent(currentPage.type, activePageName)
+    document.querySelectorAll(".reply").forEach(reply => {
+        reply.innerText = (currentLanguage === "eng") ? "See replied message" : "Yanıtlanan mesajı gör";
+    })
+    loadContent(currentPage.type, activePageName);
 }
 document.querySelectorAll('.language-select').forEach(element => element.addEventListener('click', () => changeLanguage(element.getAttribute('data-name'))));
 

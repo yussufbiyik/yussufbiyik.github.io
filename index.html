@@ -157,6 +157,7 @@
 
         var htmlRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
         var lastSixDigitsRegex = /\d{1,6}(?=[^\d]*$)/;
+        var replyRegex = /\[reply\]([\s\S]*?)\[\/reply\]/;
         // Following 2 functions return values that are CSS classes, these classes modify the look of the message.
         const isKnownUser = (name) => {
             switch (name) {
@@ -172,6 +173,7 @@
             const messageTime = new Date(docData.createdAt.seconds*1000).toTimeString().split(' ')[0];
             return messageTime
         }
+
         // Creates message element
         function generateMessageElement(docData, messageId) {
             if(messageId == undefined) messageId = "";
@@ -179,10 +181,12 @@
             messageElement.classList.add("chat-message");
             if(docData.isPinned === true) messageElement.classList.add("isPinned") 
             messageElement.id = messageId;
+            // Hour, Author and Message
             const hourAuthorContainer = document.createElement("div");
             const hourSpan = document.createElement("span");
             const authorSpan = document.createElement("span");
             const messageSpan = document.createElement("span");
+            const toolboxContainer = document.createElement("div");
             hourAuthorContainer.classList.add("hour-author-container");
             hourSpan.classList.add("message-hour");
             authorSpan.classList.add("message-author");
@@ -190,8 +194,37 @@
             hourSpan.innerHTML = `[${formatCreationDate(docData)}]`;
             authorSpan.innerHTML = `[<span class="${isKnownUser(docData.author)}">${docData.author}</span>]: `;
             messageSpan.innerHTML = docData.message;
-            hourAuthorContainer.append(hourSpan, authorSpan)
-            messageElement.append(hourAuthorContainer, messageSpan);
+            hourAuthorContainer.append(hourSpan, authorSpan);
+            // Toolbox
+            toolboxContainer.classList.add("toolbox-container");
+            const toolboxButtonReply = document.createElement("button");
+            const toolboxButtonId = document.createElement("button");
+            const toolboxButtonPin = document.createElement("button");
+            const toolboxButtonEdit = document.createElement("button");
+            const toolboxButtonDelete = document.createElement("button");
+            toolboxButtonReply.onclick = () => {
+                userMessageInput.value = `[reply]${messageId}[/reply] yanıtın`
+            }
+            toolboxButtonId.onclick = () => {
+                navigator.clipboard.writeText(messageId ? messageId : "internal message");
+            }
+            toolboxButtonPin.onclick = () => {
+                commands.find(command => command.name === "pin").execute([messageId])
+            }
+            toolboxButtonEdit.onclick = () => {
+                userMessageInput.value = `/edit ${messageId} ${docData.message}`
+            }
+            toolboxButtonDelete.onclick = () => {
+                commands.find(command => command.name === "delete").execute([messageId])
+            }
+            toolboxButtonReply.classList.add("toolbox-button-reply");
+            toolboxButtonId.classList.add("toolbox-button-id");
+            toolboxButtonPin.classList.add("toolbox-button-pin");
+            toolboxButtonEdit.classList.add("toolbox-button-edit");
+            toolboxButtonDelete.classList.add("toolbox-button-delete");
+            toolboxContainer.append(toolboxButtonReply, toolboxButtonId, toolboxButtonPin, toolboxButtonEdit, toolboxButtonDelete);
+
+            messageElement.append(hourAuthorContainer, messageSpan, toolboxContainer);
             return messageElement;
         }
         // Creates messages from the server 
@@ -207,10 +240,22 @@
         // Single funtion to send messages
         async function sendMessage(messageElement, wordsOfMessage) {
             chatMessagesElement.appendChild(messageElement);
+            const messageContent = messageElement.children[1].innerHTML;
+            if(messageContent.match(replyRegex)) {
+                const repliedMessage = document.getElementById(messageContent.match(replyRegex)[1]);
+                messageElement.children[1].innerHTML = messageElement.children[1].innerHTML.replace(messageContent.match(replyRegex)[0], 
+                `<a href="#${repliedMessage.id}" onclick="document.getElementById('${repliedMessage.id}').animate([
+                    {filter:'brightness(1)'},
+                    {filter:'brightness(5) invert(1)'},
+                    {filter:'brightness(1)'},
+                ], {
+                    duration:1000
+                })" class='reply'>Yanıtlanan mesajı gör</a>`);
+            }
             // Some little code to give server side responses without bothering the database
             // (it used to send this message to db to display for each user)
             if(wordsOfMessage != undefined) {
-                if(wordsOfMessage.find(word => word === "aw")) chatMessagesElement.appendChild(generateMessageElement(serverMessageCreator(blitzHimym)));
+                if(wordsOfMessage.find(word => ["aw", "aww"].includes(word))) chatMessagesElement.appendChild(generateMessageElement(serverMessageCreator(blitzHimym)));
             }
             if(autoScroll===true) {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
         }
@@ -364,14 +409,14 @@
                     const messageId = parameters[0];
                     const messageRef = doc(cloudDatabase, "chat-messages", messageId);
                     await updateDoc(messageRef, {
-                        isPinned: true
+                        isPinned: document.getElementById(messageId).classList.contains("isPinned") ? false : true
                     })
                 }
             },
             {
-                name: "modify",
+                name: "edit",
                 isPrivate: true,
-                usage: "/modify message-id content",
+                usage: "/edit message-id content",
                 execute: async (parameters) => {
                     if(!availableUsers.find(user => user.nick === username)) return;
                     const messageId = parameters[0];
