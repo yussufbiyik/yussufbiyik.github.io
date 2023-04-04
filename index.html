@@ -214,6 +214,8 @@
             }
             toolboxButtonEdit.onclick = () => {
                 userMessageInput.value = `/edit ${messageId} ${docData.message}`
+                userMessageInput.focus()
+                userMessageInput.setSelectionRange(7+messageId.length,-1)
             }
             toolboxButtonDelete.onclick = () => {
                 commands.find(command => command.names.includes("delete")).execute([messageId])
@@ -519,12 +521,21 @@
             userMessageInput.value = "";
         }
 
+        var latestUserMessage;
         const userMessageInput = document.getElementById("message-input");
         const messageSubmitButton = document.getElementById("message-submit-button");
         // Auto click the submit button if the key is enter
-        userMessageInput.addEventListener("keypress", (event) => {
-            if(!(event.keyCode == 13)) return;
-            messageSubmitButton.click();
+        userMessageInput.addEventListener("keydown", (event) => {
+            switch (event.which) {
+                case 13:
+                    messageSubmitButton.click()
+                    break;
+                case 38:
+                    event.preventDefault()
+                    userMessageInput.value = latestUserMessage;
+                    userMessageInput.setSelectionRange(-1,-1)
+                    break;
+            }
         });
         // Add the message to the collection
         messageSubmitButton.onclick = async () => {
@@ -536,6 +547,7 @@
             // <!-- --> makes the message empty
             if(messageInputValue.length < 1) return;
             // Clear the message input
+            latestUserMessage = userMessageInput.value;
             userMessageInput.value = "";
             // Check if the message is a command
             if(messageInputValue.startsWith('/')) {commandManager(messageInputValue); return;}
