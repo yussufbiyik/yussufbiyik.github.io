@@ -210,13 +210,13 @@
                 navigator.clipboard.writeText(messageId ? messageId : "internal message");
             }
             toolboxButtonPin.onclick = () => {
-                commands.find(command => command.name === "pin").execute([messageId])
+                commands.find(command => command.names.includes("pin")).execute([messageId])
             }
             toolboxButtonEdit.onclick = () => {
                 userMessageInput.value = `/edit ${messageId} ${docData.message}`
             }
             toolboxButtonDelete.onclick = () => {
-                commands.find(command => command.name === "delete").execute([messageId])
+                commands.find(command => command.names.includes("delete")).execute([messageId])
             }
             toolboxButtonReply.classList.add("toolbox-button-reply");
             toolboxButtonId.classList.add("toolbox-button-id");
@@ -341,10 +341,10 @@
         const blitzHimym = `<img src="https://media.tenor.com/v5y8uoAvbzAAAAAC/aw-man-met.gif">`
         const commands = [
             {
-                name:"nick",
+                names:["nick", "isim"],
                 isPrivate: false,
                 // Params: <nick-name>
-                usage: `/nick nickname`,
+                usage: `/nick nickname || /isim kullanıcı-adı`,
                 description: {
                     eng:"Use this command to set your nickname.",
                     tr:"Kullanıcı adı belirleme komutu."
@@ -358,9 +358,9 @@
                 }
             },
             {
-                name:"scroll",
+                names:["scroll", "kaydır"],
                 isPrivate: false,
-                usage: `/scroll`,
+                usage: `/scroll || /kaydır`,
                 description: {
                     eng:"Toggles auto scrolling when a new message comes.",
                     tr:"Yeni mesaj gelince sohbeti en aşağıya çekmeyi açıp kapatır."
@@ -372,9 +372,9 @@
                 }
             },
             {
-                name:"expand",
+                names:["expand", "genişlet"],
                 isPrivate: false,
-                usage: `/expand`,
+                usage: `/expand || /genişlet`,
                 description: {
                     eng:"Toggles chat expansion.",
                     tr:"Sohbet alanını uzatıp kısaltır."
@@ -384,10 +384,10 @@
                 }
             },
             {
-                name:"login",
+                names:["login", "giriş"],
                 isPrivate: true,
                 // Params: <nickname> <password>
-                usage: `/login nickname password`,
+                usage: `/login nickname password  || /giriş kullanıcı şifre`,
                 description: {
                     eng:"Allows you to log into a registered account",
                     tr:"Kayıtlı bir hesaba girişini sağlar."
@@ -405,7 +405,7 @@
                     const userDoc = await getDoc(userRef);
                     // Change the nickname if the passwords match
                     if(userDoc.data().password === paramPassword) {
-                        commands.find(command => command.name === "nick").execute([userDoc.data().username], true);
+                        commands.find(command => command.names.includes("nick")).execute([userDoc.data().username], true);
                         localStorage.setItem("password", parameters[1]);
                     }else {
                         // If not then send the guard dog
@@ -414,9 +414,9 @@
                 }
             },
             {
-                name: "pin",
+                names: ["pin", "sabitle"],
                 isPrivate: true,
-                usage: "/pin message-id",
+                usage: "/pin message-id  || /sabitle mesaj-id",
                 execute: async (parameters) => {
                     if(!availableUsers.find(user => user.nick === username)) return;
                     const messageId = parameters[0];
@@ -427,9 +427,9 @@
                 }
             },
             {
-                name: "edit",
+                names: ["edit", "düzenle"],
                 isPrivate: true,
-                usage: "/edit message-id content",
+                usage: "/edit message-id new-message-content || /düzenle mesaj-id yeni-mesaj-içeriği",
                 execute: async (parameters) => {
                     if(!availableUsers.find(user => user.nick === username)) return;
                     const messageId = parameters[0];
@@ -442,9 +442,9 @@
                 }
             },
             {
-                name: "delete",
+                names: ["delete", "sil"],
                 isPrivate: true,
-                usage: "/delete message-id",
+                usage: "/delete message-id || /sil mesaj-id",
                 execute: async (parameters) => {
                     if(!availableUsers.find(user => user.nick === username)) return;
                     const messageId = parameters[0];
@@ -453,9 +453,9 @@
                 }
             },
             {
-                name:"help",
+                names:["help", "yardım"],
                 isPrivate: false,
-                usage: "/help",
+                usage: "/help || /yardım",
                 description: {
                     eng:"Lists commands",
                     tr:"Komutları listeler"
@@ -486,10 +486,10 @@
             username = "Anonim" + userIdentifier;
             if(availableUsers.find(user => user.nick === localStorage.getItem("username"))) {
                 if(localStorage.getItem("password") != null) {
-                    commands.find(command => command.name === "login").execute([availableUsers.find(user => user.nick === storedUsername).title, localStorage.getItem("password")]);
+                    commands.find(command => command.names.includes("login")).execute([availableUsers.find(user => user.nick === storedUsername).title, localStorage.getItem("password")]);
                 }else {
                     localStorage.setItem("username", username);
-                    commands.find(command => command.name === "login").execute([availableUsers.find(user => user.nick === storedUsername).title, "try-harder"]);
+                    commands.find(command => command.names.includes("login")).execute([availableUsers.find(user => user.nick === storedUsername).title, "try-harder"]);
                 }
             }else {
                 // Set the username if it has the 6 digit identifier (userIdentifier)
@@ -508,8 +508,8 @@
             parsedMessage.shift();
             const commandParameters = parsedMessage;
             // If there is such command then execute it
-            if(commands.find(command => command.name === commandName) != undefined) {
-                const command = commands.find(command => command.name === commandName);
+            if(commands.find(command => command.names.includes(commandName)) != undefined) {
+                const command = commands.find(command => command.names.includes(commandName));
                 command.execute(commandParameters)
                 chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
                 return;
