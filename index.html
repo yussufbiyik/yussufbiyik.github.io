@@ -372,6 +372,18 @@
                 }
             },
             {
+                name:"expand",
+                isPrivate: false,
+                usage: `/expand`,
+                description: {
+                    eng:"Toggles chat expansion.",
+                    tr:"Sohbet alanını uzatıp kısaltır."
+                },
+                execute: () => {
+                    document.getElementById("chat-box").classList.toggle("expanded")
+                }
+            },
+            {
                 name:"login",
                 isPrivate: true,
                 // Params: <nickname> <password>

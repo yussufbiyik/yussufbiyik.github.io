@@ -321,6 +321,10 @@ details[open] {
     grid-auto-flow: column;
 }
 
+#chat-box.expanded {
+    grid-template-rows: 500px auto;
+}
+
 #chat-input-container {
     gap: 5px;
     display: grid;
