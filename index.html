@@ -159,6 +159,18 @@
         const lastSixDigitsRegex = /\d{1,6}(?=[^\d]*$)/;
         const replyRegex = /\[reply\]([\s\S]*?)\[\/reply\]/;
         const TENOR_GIF_REGEX = /https:\/\/media\.tenor\.com\/.+\.gif/;
+        const SPOTIFY_LINK_REGEX = /(?:https?:\/\/(?:play|open)\.spotify\.com\/(playlist|track)\/[^?]+)(?:\?.*)?/gm;
+        const SPOTIFY_ID_REGEX = /(playlist|track)\/([^?]+)/gm;
+        const SPOTIFY_IFRAME_TEMPLATE = (source) => `<iframe 
+            style="border-radius:12px" 
+            src="https://open.spotify.com/embed/${source}?utm_source=generator" 
+            width="100%" 
+            height="100%" 
+            frameBorder="0" 
+            allowfullscreen="" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+            loading="lazy">
+        </iframe>`
         // Following 2 functions return values that are CSS classes, these classes modify the look of the message.
         const isKnownUser = (name) => {
             switch (name) {
@@ -195,6 +207,7 @@
             hourSpan.innerHTML = `[${formatCreationDate(docData)}]`;
             authorSpan.innerHTML = `[<span class="${isKnownUser(docData.author)}">${docData.author}</span>]: `;
             if(docData.message.match(TENOR_GIF_REGEX) != null) docData.message = docData.message.replace(TENOR_GIF_REGEX, `<img src="${docData.message.match(TENOR_GIF_REGEX)[0]}">`);
+            if(docData.message.match(SPOTIFY_ID_REGEX) != null) docData.message = docData.message.replace(SPOTIFY_LINK_REGEX, SPOTIFY_IFRAME_TEMPLATE(docData.message.match(SPOTIFY_ID_REGEX)[0]));
             messageSpan.innerHTML = docData.message;
             hourAuthorContainer.append(hourSpan, authorSpan);
             // Toolbox
