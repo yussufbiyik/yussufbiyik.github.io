@@ -152,12 +152,12 @@
         var didMessagesLoad = false;
 
         // Check if user previously wanted the chat to stop auto scrolling
-        var autoScroll = (localStorage.getItem("autoScroll") === null) ? true : localStorage.getItem("autoScroll");
+        var autoScroll = (localStorage.getItem("autoScroll") === null) ? "true" : localStorage.getItem("autoScroll");
         const chatMessagesElement = document.getElementById('chat-messages');
 
-        const htmlRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
-        const lastSixDigitsRegex = /\d{1,6}(?=[^\d]*$)/;
-        const replyRegex = /\[reply\]([\s\S]*?)\[\/reply\]/;
+        const HTML_REGEX = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
+        const LAST_SIX_DIGITS_REGEX = /\d{1,6}(?=[^\d]*$)/;
+        const REPLY_REGEX = /\[reply\]([\s\S]*?)\[\/reply\]/;
         const TENOR_GIF_REGEX = /https:\/\/media\.tenor\.com\/.+\.gif/;
         const SPOTIFY_LINK_REGEX = /(?:https?:\/\/(?:play|open)\.spotify\.com\/(playlist|track)\/[^?]+)(?:\?.*)?/gm;
         const SPOTIFY_ID_REGEX = /(playlist|track)\/([^?]+)/gm;
@@ -260,9 +260,9 @@
             chatMessagesElement.appendChild(messageElement);
             const messageContent = messageElement.children[1].innerHTML;
             // If message is a reply to another message
-            if(messageContent.match(replyRegex)) {
-                const repliedMessage = document.getElementById(messageContent.match(replyRegex)[1]);
-                messageElement.children[1].innerHTML = messageElement.children[1].innerHTML.replace(messageContent.match(replyRegex)[0], 
+            if(messageContent.match(REPLY_REGEX)) {
+                const repliedMessage = document.getElementById(messageContent.match(REPLY_REGEX)[1]);
+                messageElement.children[1].innerHTML = messageElement.children[1].innerHTML.replace(messageContent.match(REPLY_REGEX)[0], 
                 `<a href="#${repliedMessage.id}" onclick="document.getElementById('${repliedMessage.id}').animate([
                     {filter:'brightness(1)'},
                     {filter:'brightness(5) invert(1)'},
@@ -276,7 +276,7 @@
             if(wordsOfMessage != undefined) {
                 if(wordsOfMessage.find(word => ["aw", "aww"].includes(word))) chatMessagesElement.appendChild(generateMessageElement(serverMessageCreator(blitzHimym)));
             }
-            if(autoScroll===true) {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
+            if(autoScroll==="true") {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
         }
         // Get pinned messages
         const pinnedQuerySnapshot = await getDocs(pinnedMessagesQuery);
@@ -348,7 +348,7 @@
                     }
                 })
                 // Scroll to bottom if the user is allowing you to
-                if(autoScroll===true) {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
+                if(autoScroll==="true") {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
             }
         });
 
@@ -384,9 +384,9 @@
                     tr:"Yeni mesaj gelince sohbeti en aşağıya çekmeyi açıp kapatır."
                 },
                 execute: () => {
-                    autoScroll = !autoScroll;
+                    if(autoScroll === "true") {autoScroll = "false"} else {autoScroll = "true"}
                     localStorage.setItem("autoScroll", autoScroll);
-                    sendMessage(generateMessageElement(serverMessageCreator(`Otomatik kaydırma ${(autoScroll === true) ? "açık" : "kapalı"}! // Auto scroll is ${(autoScroll === true) ? "open" : "closed"}!`)));
+                    sendMessage(generateMessageElement(serverMessageCreator(`Otomatik kaydırma ${(autoScroll === "true") ? "açık" : "kapalı"}! // Auto scroll is ${(autoScroll === "true") ? "open" : "closed"}!`)));
                 }
             },
             {
@@ -511,7 +511,7 @@
                 }
             }else {
                 // Set the username if it has the 6 digit identifier (userIdentifier)
-                if(storedUsername.match(lastSixDigitsRegex) && storedUsername.match(lastSixDigitsRegex).length === 6) {
+                if(storedUsername.match(LAST_SIX_DIGITS_REGEX) && storedUsername.match(LAST_SIX_DIGITS_REGEX).length === 6) {
                     username = storedUsername;
                 }
             }
@@ -558,7 +558,7 @@
             // Return if the message is empty
             if(userMessageInput.value.trim().length < 1) return;
             // Clean the empty spaces, delete HTML tags and define the message
-            const messageInputValue = userMessageInput.value.trim().replace(htmlRegex, "");
+            const messageInputValue = userMessageInput.value.trim().replace(HTML_REGEX, "");
             // Check again if the message becomes empty after the cleaning
             // <!-- --> makes the message empty
             if(messageInputValue.length < 1) return;
