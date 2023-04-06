@@ -155,9 +155,10 @@
         var autoScroll = (localStorage.getItem("autoScroll") === null) ? true : localStorage.getItem("autoScroll");
         const chatMessagesElement = document.getElementById('chat-messages');
 
-        var htmlRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
-        var lastSixDigitsRegex = /\d{1,6}(?=[^\d]*$)/;
-        var replyRegex = /\[reply\]([\s\S]*?)\[\/reply\]/;
+        const htmlRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
+        const lastSixDigitsRegex = /\d{1,6}(?=[^\d]*$)/;
+        const replyRegex = /\[reply\]([\s\S]*?)\[\/reply\]/;
+        const TENOR_GIF_REGEX = /https:\/\/media\.tenor\.com\/.+\.gif/;
         // Following 2 functions return values that are CSS classes, these classes modify the look of the message.
         const isKnownUser = (name) => {
             switch (name) {
@@ -193,6 +194,7 @@
             messageSpan.classList.add("message");
             hourSpan.innerHTML = `[${formatCreationDate(docData)}]`;
             authorSpan.innerHTML = `[<span class="${isKnownUser(docData.author)}">${docData.author}</span>]: `;
+            if(docData.message.match(TENOR_GIF_REGEX) != null) docData.message = docData.message.replace(TENOR_GIF_REGEX, `<img src="${docData.message.match(TENOR_GIF_REGEX)[0]}">`);
             messageSpan.innerHTML = docData.message;
             hourAuthorContainer.append(hourSpan, authorSpan);
             // Toolbox
@@ -244,6 +246,7 @@
         async function sendMessage(messageElement, wordsOfMessage) {
             chatMessagesElement.appendChild(messageElement);
             const messageContent = messageElement.children[1].innerHTML;
+            // If message is a reply to another message
             if(messageContent.match(replyRegex)) {
                 const repliedMessage = document.getElementById(messageContent.match(replyRegex)[1]);
                 messageElement.children[1].innerHTML = messageElement.children[1].innerHTML.replace(messageContent.match(replyRegex)[0], 
