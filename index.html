@@ -272,7 +272,18 @@
             const messageContent = messageElement.children[1].innerHTML;
             // If message is a reply to another message
             if(messageContent.match(REPLY_REGEX)) {
-                const repliedMessage = document.getElementById(messageContent.match(REPLY_REGEX)[1]);
+                const REPLIED_MESSAGE_ID = messageContent.match(REPLY_REGEX)[1];
+                var repliedMessage = document.getElementById(REPLIED_MESSAGE_ID);
+                // If replied message is deleted
+                // get the message data from db and
+                // create it again
+                if(repliedMessage===null) {
+                    const repliedMessageRef = doc(cloudDatabase, "chat-messages", REPLIED_MESSAGE_ID);
+                    const repliedMessageSnap = await getDoc(repliedMessageRef);
+                    const repliedMessageData = repliedMessageSnap.data();
+                    chatMessagesElement.insertBefore(generateMessageElement(repliedMessageData, REPLIED_MESSAGE_ID), messageElement);
+                    repliedMessage = document.getElementById(REPLIED_MESSAGE_ID);
+                }
                 messageElement.children[1].innerHTML = messageElement.children[1].innerHTML.replace(messageContent.match(REPLY_REGEX)[0], 
                 `<a href="#${repliedMessage.id}" onclick="document.getElementById('${repliedMessage.id}').animate([
                     {filter:'brightness(1)'},
