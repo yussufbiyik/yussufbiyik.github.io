@@ -144,9 +144,9 @@
         const availableUsers = [{title:"admin", nick:"yusufbiyik"}, {title:"server", nick:"server"}];
         const messages = [];
         // List chat messages in ascending order of creation date
-        const messagesFromLastSixHoursQuery = query(collection(cloudDatabase, "chat-messages"), where("createdAt", ">=", nowTimestamp), orderBy("createdAt", "asc"));
+        const MESSAGES_FROM_LAST_SIX_HOURS_QUERY = query(collection(cloudDatabase, "chat-messages"), where("createdAt", ">=", nowTimestamp), orderBy("createdAt", "asc"));
         // List pinned chat messages in ascending order of creation date
-        const pinnedMessagesQuery = query(collection(cloudDatabase, "chat-messages"), where("isPinned", "==", true), orderBy("createdAt", "asc"));
+        const PINNED_MESSAGES_QUERY = query(collection(cloudDatabase, "chat-messages"), where("isPinned", "==", true), orderBy("createdAt", "asc"));
 
         // Define a variable to determine if the all the messages loaded initally
         var didMessagesLoad = false;
@@ -301,7 +301,7 @@
             if(autoScroll==="true") {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
         }
         // Get pinned messages
-        const pinnedQuerySnapshot = await getDocs(pinnedMessagesQuery);
+        const pinnedQuerySnapshot = await getDocs(PINNED_MESSAGES_QUERY);
         pinnedQuerySnapshot.forEach(doc => {
             // Return if the message is sent in the last 6 hours
             // There is no need to do it twice since unsubscribe will list it again
@@ -313,7 +313,7 @@
         // Get message count indicator tag
         const messageCount = document.getElementById("message-count");
         // Triggers when collection is changed whether by a new document or by an updated one
-        const unsubscribe = onSnapshot(messagesFromLastSixHoursQuery, (querySnapshot) => {
+        const unsubscribe = onSnapshot(MESSAGES_FROM_LAST_SIX_HOURS_QUERY, (querySnapshot) => {
             // If messages were initally loaded, then there is no need to load all the messages again,
             // so otherwise load only the changes,
             // Following if statement does exactly that.
