@@ -97,7 +97,6 @@
     </svg>
     <script src="./datasource.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
         import { getFirestore, doc, collection, query, orderBy, onSnapshot, getDoc, addDoc, Timestamp, where, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
@@ -122,9 +121,6 @@
             .catch(function (error) {
                 console.log(error);
             })
-        }
-        function getIP(json) {
-            document.write("My public IP address is: ", json.ip);
         }
         getBadWords()
         // I learnt that this was okay to expose
