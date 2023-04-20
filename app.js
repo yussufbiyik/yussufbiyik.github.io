@@ -80,6 +80,18 @@ function changeHighlight(element) {
     }
 }
 
+// I assume at least 500 visits were caused by me debugging
+// maybe even more, i had to debug a lot..
+var VISIT_COUNT = 500;
+
+function activateVisitCounter() {
+    axios.get("https://api.countapi.xyz/hit/yussufbiyik.github.io/visits").then((response) => {
+        if(response.data.value != undefined && !isNaN(response.data.value)) VISIT_COUNT += response.data.value
+        const visitorCountData = document.getElementById('visitor-count');
+        visitorCountData.innerText = VISIT_COUNT;
+    })
+}
+
 function loadContent(contentType, contentName) {
     switch (contentType) {
         case "detailed-gallery":
@@ -101,6 +113,7 @@ function loadContent(contentType, contentName) {
             console.error("İçerik tipi tanınmıyor!");
             break;
     }
+    activateVisitCounter()
 }
 
 // themes from "datasource.js"
@@ -125,7 +138,9 @@ const projelerimButton = document.getElementById('projelerim');
 const yetkinliklerimButton = document.getElementById('yetkinliklerim');
 const snippetsButton = document.getElementById('snippets');
 const pixelArtButton = document.getElementById('pixel-art');
-const ModellemeRenderlarButton = document.getElementById('3d-modelleme-renderlar');
+const modellemeRenderlarButton = document.getElementById('3d-modelleme-renderlar');
+const messageCountText = document.getElementById('message-count-text');
+const visitorCountText = document.getElementById('visitor-count-text');
 
 function changeLanguage(languageName) {
     currentLanguage = languageName;
@@ -135,10 +150,12 @@ function changeLanguage(languageName) {
     snippetsButton.innerText = leftSideContent.snippetsButton[currentLanguage];
     yetkinliklerimButton.innerText = leftSideContent.yetkinliklerimButton[currentLanguage];
     pixelArtButton.innerText = leftSideContent.pixelArtButton[currentLanguage];
-    ModellemeRenderlarButton.innerText = leftSideContent.ModellemeRenderlarButton[currentLanguage];
+    modellemeRenderlarButton.innerText = leftSideContent.modellemeRenderlarButton[currentLanguage];
     document.querySelectorAll(".reply").forEach(reply => {
         reply.innerText = (currentLanguage === "eng") ? "See replied message" : "Yanıtlanan mesajı gör";
     })
+    messageCountText.innerText = (currentLanguage === "eng") ? "Messages" : "Mesaj";
+    visitorCountText.innerText = (currentLanguage === "eng") ? "Visitor" : "Ziyaretçi";
     loadContent(currentPage.type, activePageName);
 }
 document.querySelectorAll('.language-select').forEach(element => element.addEventListener('click', () => changeLanguage(element.getAttribute('data-name'))));
