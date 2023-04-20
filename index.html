@@ -74,6 +74,9 @@
                     <span class="tag-highlight" id="visitor-count"></span> 
                     <span id="visitor-count-text">Ziyaretçi</span>
                 </div>
+                <div class="chat-contol" id="chat-control-expand">
+                    <img src="assets/icons/expandicon.png" alt="">
+                </div>
             </summary>
             <div id="chat-box">
                 <div id="chat-messages"></div>
@@ -515,6 +518,9 @@
                 }
             }
         ]
+        
+        const expandChatControlButton = document.getElementById("chat-control-expand");
+        expandChatControlButton.onclick = commands.find(command => command.names[0] === "expand").execute()
 
         // Generate a 6 digit number as an identifier
         var userIdentifier = Math.floor(100000 + Math.random() * 900000);

@@ -275,6 +275,14 @@ summary {cursor: pointer;list-style: none;outline: none;}
     color: var(--hover-border-color);
 }
 
+.chat-contol {
+    padding: 1px;
+    float: right;
+    display: grid;
+    cursor: pointer;
+    border: var(--default-border-settings);
+}
+
 details[open] {
     padding-top: 15px;
 }
