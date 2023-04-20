@@ -298,6 +298,7 @@
             if(wordsOfMessage != undefined) {
                 if(wordsOfMessage.find(word => ["aw", "aww"].includes(word))) chatMessagesElement.appendChild(generateMessageElement(serverMessageCreator(BLITZ_HIMYM_GIF)));
             }
+            messageCount.innerText = chatMessagesElement.childNodes.length;
             if(autoScroll==="true") {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
         }
         // Get pinned messages
@@ -320,7 +321,6 @@
             if(didMessagesLoad === false) {
                 querySnapshot.forEach((doc) => {
                     messages.push({docID: doc.id,data:doc.data()});
-                    messageCount.innerText = messages.length;
                     // Add the message to the message container
                     sendMessage(generateMessageElement(doc.data(), doc.id), doc.data().message.split(" "));
                 });
@@ -341,7 +341,6 @@
                             messages.push({docID: change.doc.id,data:change.doc.data()})
                             // Add the message to the message container
                             sendMessage(generateMessageElement(change.doc.data(), change.doc.id), change.doc.data().message.split(" "));
-                            messageCount.innerText = messages.length;
                             break;
                         case "modified":
                             // Find the message from both the messages array and the html
@@ -364,7 +363,6 @@
                             // then delete them both
                             const removedMessageIndex = messages.findIndex(message => message.id === change.doc.id);
                             messages.splice(removedMessageIndex, 1);
-                            messageCount.innerText = messages.length;
                             document.getElementById(change.doc.id).remove();
                             break;
                     }
