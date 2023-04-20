@@ -262,14 +262,17 @@ summary {cursor: pointer;list-style: none;outline: none;}
     max-width: 200px;
 }
 
-#message-count {
+.small-tag {
+    display: inline;
     padding: 1px 4px;
     margin-left: 5px;
     border-radius: 5px;
 
     user-select: none;
-    color: var(--hover-border-color);
     background-color: var(--background-color);
+}
+.small-tag > .tag-highlight {
+    color: var(--hover-border-color);
 }
 
 details[open] {

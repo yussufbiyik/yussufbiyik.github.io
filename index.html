@@ -64,7 +64,17 @@
                     * Prevent multiple db reads when logins fail
                     * Add commands for some easter eggs and backsite gateways.
             -->
-            <summary><img height="14px" src="./assets/icons/chaticon.png" alt=""> Chat <span id="message-count"></span></summary>
+            <summary>
+                <img height="14px" src="./assets/icons/chaticon.png" alt=""> Chat 
+                <div class="small-tag">
+                    <span class="tag-highlight" id="message-count"></span>
+                    <span id="message-count-text">Mesaj</span>
+                </div> 
+                <div class="small-tag">
+                    <span class="tag-highlight" id="visitor-count"></span> 
+                    <span id="visitor-count-text">Ziyaretçi</span>
+                </div>
+            </summary>
             <div id="chat-box">
                 <div id="chat-messages"></div>
                 <div id="chat-input-container">
@@ -266,6 +276,8 @@
                 createdAt: Timestamp.fromDate(new Date())
             }
         }
+        // Get message count indicator tag
+        const messageCount = document.getElementById("message-count");
         // Single funtion to send messages
         async function sendMessage(messageElement, wordsOfMessage) {
             chatMessagesElement.appendChild(messageElement);
@@ -311,8 +323,6 @@
             // Add the message to the message container
             sendMessage(generateMessageElement(doc.data(), doc.id));
         })
-        // Get message count indicator tag
-        const messageCount = document.getElementById("message-count");
         // Triggers when collection is changed whether by a new document or by an updated one
         const unsubscribe = onSnapshot(MESSAGES_FROM_LAST_SIX_HOURS_QUERY, (querySnapshot) => {
             // If messages were initally loaded, then there is no need to load all the messages again,

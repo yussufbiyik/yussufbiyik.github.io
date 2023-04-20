@@ -28,7 +28,7 @@ const leftSideContent = {
         eng:"Pixel Art",
         tr: "Pixel Art"
     },
-    ModellemeRenderlarButton: {
+    modellemeRenderlarButton: {
         eng:"3D Modelling/Renders",
         tr: "3D Modelleme/Renderlar"
     },
