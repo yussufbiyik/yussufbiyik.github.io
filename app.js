@@ -143,6 +143,9 @@ function changeLanguage(languageName) {
 }
 document.querySelectorAll('.language-select').forEach(element => element.addEventListener('click', () => changeLanguage(element.getAttribute('data-name'))));
 
+const BROWSER_PREFFERED_LANGUAGE = navigator.language || navigator.userLanguage;
+if(BROWSER_PREFFERED_LANGUAGE != "tr") changeLanguage("eng");
+
 // Background Related
 const backgroundNoiseAnimationInterval = 20000;
 const backgroundDNAAnimationInterval = 5000;
