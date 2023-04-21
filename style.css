@@ -275,12 +275,24 @@ summary {cursor: pointer;list-style: none;outline: none;}
     color: var(--hover-border-color);
 }
 
+.chat-controls {
+    padding-top: 5px;
+}
+
 .chat-contol {
+    height: 24px;
+    aspect-ratio: 1/1;
+
     padding: 1px;
-    float: right;
     display: grid;
     cursor: pointer;
     border: var(--default-border-settings);
+    
+    /* right: 30px;
+    top: 30px;
+    z-index: 4;
+    padding: 1px;
+    position: absolute; */
 }
 
 details[open] {

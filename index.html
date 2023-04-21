@@ -58,7 +58,7 @@
                 </div>
             </div>
         </div>
-        <details class="bottombar">
+        <details open class="bottombar">
             <!-- 
                 TODO:
                     * Prevent multiple db reads when logins fail
@@ -74,10 +74,12 @@
                     <span class="tag-highlight" id="visitor-count"></span> 
                     <span id="visitor-count-text">Ziyaretçi</span>
                 </div>
+            </summary>
+            <div class="chat-controls">
                 <div class="chat-contol" id="chat-control-expand">
                     <img src="assets/icons/expandicon.png" alt="">
                 </div>
-            </summary>
+            </div>
             <div id="chat-box">
                 <div id="chat-messages"></div>
                 <div id="chat-input-container">
@@ -429,7 +431,7 @@
                     tr:"Sohbet alanını uzatıp kısaltır."
                 },
                 execute: () => {
-                    document.getElementById("chat-box").classList.toggle("expanded")
+                    document.getElementById("chat-box").classList.toggle("expanded");
                 }
             },
             {
@@ -520,7 +522,7 @@
         ]
         
         const expandChatControlButton = document.getElementById("chat-control-expand");
-        expandChatControlButton.onclick = commands.find(command => command.names[0] === "expand").execute()
+        expandChatControlButton.onclick = () => {commands.find(command => command.names[0] === "expand").execute()}
 
         // Generate a 6 digit number as an identifier
         var userIdentifier = Math.floor(100000 + Math.random() * 900000);
