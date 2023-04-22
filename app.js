@@ -92,6 +92,7 @@ function activateVisitCounter() {
     })
 }
 
+
 function loadContent(contentType, contentName) {
     switch (contentType) {
         case "detailed-gallery":
@@ -113,7 +114,11 @@ function loadContent(contentType, contentName) {
             console.error("İçerik tipi tanınmıyor!");
             break;
     }
-    activateVisitCounter()
+}
+
+function initialPageLoad() {
+    activateVisitCounter();
+    loadContent('detailed-gallery', 'projelerim');
 }
 
 // themes from "datasource.js"
