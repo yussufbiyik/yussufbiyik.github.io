@@ -111,19 +111,22 @@
         </filter>
     </svg>
     <script src="./datasource.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script type="module">
+        // const start = Date.now();
+        import "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
         import { getFirestore, doc, collection, query, orderBy, onSnapshot, getDoc, addDoc, Timestamp, where, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
         var engBadWords = [], trBadWords = [];
         // Get bad words via axios
-        //? Maybe use localStorage to store them after the first download?
         function getBadWords() {
+            // Return if the bad words are already in the local storage (-300ms faster 🤙)
+            if(localStorage.getItem("engBadWords") != undefined && localStorage.getItem("trBadWords") != undefined) return;
             // For English:
             axios.get('https://raw.githubusercontent.com/zacanger/profane-words/master/words.json')
             .then(function (response) {
                 engBadWords = Array.from(response.data);
+                localStorage.setItem("engBadWords", engBadWords)
             })
             .catch(function (error) {
                 console.log(error);
@@ -132,6 +135,7 @@
             axios.get('https://raw.githubusercontent.com/ooguz/turkce-kufur-karaliste/master/karaliste.json')
             .then(function (response) {
                 trBadWords = Array.from(response.data);
+                localStorage.setItem("trBadWords", trBadWords)
             })
             .catch(function (error) {
                 console.log(error);
@@ -185,8 +189,8 @@
             title="Spotify content sent by a user"
             style="border-radius:12px" 
             src="https://open.spotify.com/embed/${source}?utm_source=generator" 
-            width="100%" 
-            height="100%" 
+            width="450px" 
+            height="80px" 
             frameBorder="0" 
             allowfullscreen="" 
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
@@ -216,11 +220,7 @@
             if(docData.isPinned === true) messageElement.classList.add("isPinned") 
             messageElement.id = messageId;
             // Hour, Author and Message
-            const hourAuthorContainer = document.createElement("div");
-            const hourSpan = document.createElement("span");
-            const authorSpan = document.createElement("span");
-            const messageSpan = document.createElement("span");
-            const toolboxContainer = document.createElement("div");
+            const [hourAuthorContainer, hourSpan, authorSpan, messageSpan, toolboxContainer] = [document.createElement("div"), document.createElement("span"), document.createElement("span"), document.createElement("span"), document.createElement("div")]
             hourAuthorContainer.classList.add("hour-author-container");
             hourSpan.classList.add("message-hour");
             authorSpan.classList.add("message-author");
@@ -233,11 +233,7 @@
             hourAuthorContainer.append(hourSpan, authorSpan);
             // Toolbox
             toolboxContainer.classList.add("toolbox-container");
-            const toolboxButtonReply = document.createElement("button");
-            const toolboxButtonId = document.createElement("button");
-            const toolboxButtonPin = document.createElement("button");
-            const toolboxButtonEdit = document.createElement("button");
-            const toolboxButtonDelete = document.createElement("button");
+            const [toolboxButtonReply, toolboxButtonId, toolboxButtonPin, toolboxButtonEdit, toolboxButtonDelete] = [document.createElement("button"), document.createElement("button"), document.createElement("button"), document.createElement("button"), document.createElement("button")]
             toolboxButtonReply.setAttribute("title", "Reply")
             toolboxButtonId.setAttribute("title", "Id")
             toolboxButtonPin.setAttribute("title", "Pin")
@@ -385,6 +381,9 @@
                 // Scroll to bottom if the user is allowing you to
                 if(autoScroll==="true") {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
             }
+            // Timer end
+            // const end = Date.now();
+            // console.log(end - start)
         });
 
         // I just didn't want to use a library to use md5
