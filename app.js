@@ -145,7 +145,7 @@ const snippetsButton = document.getElementById('snippets');
 const pixelArtButton = document.getElementById('pixel-art');
 const modellemeRenderlarButton = document.getElementById('3d-modelleme-renderlar');
 const messageCountText = document.getElementById('message-count-text');
-const visitorCountText = document.getElementById('visitor-count-text');
+// const visitorCountText = document.getElementById('visitor-count-text');
 
 function changeLanguage(languageName) {
     currentLanguage = languageName;
@@ -160,7 +160,7 @@ function changeLanguage(languageName) {
         reply.innerText = (currentLanguage === "eng") ? "See replied message" : "Yanıtlanan mesajı gör";
     })
     messageCountText.innerText = (currentLanguage === "eng") ? "Messages" : "Mesaj";
-    visitorCountText.innerText = (currentLanguage === "eng") ? "Visitor" : "Ziyaretçi";
+    // visitorCountText.innerText = (currentLanguage === "eng") ? "Visitor" : "Ziyaretçi";
     loadContent(currentPage.type, activePageName);
 }
 document.querySelectorAll('.language-select').forEach(element => element.addEventListener('click', () => changeLanguage(element.getAttribute('data-name'))));
