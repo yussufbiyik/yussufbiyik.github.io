@@ -120,7 +120,7 @@
         var engBadWords = [], trBadWords = [];
         // Get bad words via axios
         function getBadWords() {
-            // Return if the bad words are already in the local storage (-300ms faster 🤙)
+            // Return if the bad words are already in the local storage (-300ms 🤙)
             if(localStorage.getItem("engBadWords") != undefined && localStorage.getItem("trBadWords") != undefined) return;
             // For English:
             axios.get('https://raw.githubusercontent.com/zacanger/profane-words/master/words.json')
@@ -364,20 +364,27 @@
             messageSpan.classList.add("message");
             hourSpan.innerHTML = `[${formatCreationDate(docData)}]`;
             authorSpan.innerHTML = `[<span class="${isKnownUser(docData.author)}">${docData.author}</span>]: `;
-            if(docData.message.match(TENOR_GIF_REGEX) != null) docData.message = docData.message.replace(TENOR_GIF_REGEX, `<img loading="lazy" alt="A gif sent by an user" src="${docData.message.match(TENOR_GIF_REGEX)[0]}">`);
-            if(docData.message.match(SPOTIFY_ID_REGEX) != null) docData.message = docData.message.replace(SPOTIFY_LINK_REGEX, SPOTIFY_IFRAME_TEMPLATE(docData.message.match(SPOTIFY_ID_REGEX)[0]));
-            messageSpan.innerHTML = docData.message;
+            // Parse the message to determine if the message contains any gifs or spotify links,
+            // if so replace them with their respective html elements
+            const parsedMessage = () => {
+                if(docData.message.match(TENOR_GIF_REGEX) != null) return docData.message.replace(TENOR_GIF_REGEX, `<img loading="lazy" alt="A gif sent by an user" src="${docData.message.match(TENOR_GIF_REGEX)[0]}">`);
+                if(docData.message.match(SPOTIFY_ID_REGEX) != null) return docData.message.replace(SPOTIFY_LINK_REGEX, SPOTIFY_IFRAME_TEMPLATE(docData.message.match(SPOTIFY_ID_REGEX)[0]));
+                return docData.message;
+            };
+            messageSpan.innerHTML = parsedMessage()
             hourAuthorContainer.append(hourSpan, authorSpan);
             // Toolbox
             toolboxContainer.classList.add("toolbox-container");
+            // Define button names
             const buttonNames = ["Reply", "Id", "Pin", "Edit", "Delete"];
-            // Loop through the button names and set the title attribute for each button
+            // Loop through the button names and set the details for each button
             for (let name of buttonNames) {
                 const toolboxButton = document.createElement("button");
                 toolboxButton.id = `toolboxButton${name}`;
                 toolboxButton.classList.add(`toolbox-button-${name.toLowerCase()}`)
                 toolboxButton.setAttribute("title", name);
                 toolboxContainer.append(toolboxButton);
+                // Set the onclick event for each button to execute their respective features
                 switch (name) {
                     case "Reply":
                         toolboxButton.onclick = () => {
@@ -412,7 +419,6 @@
                         break;
                 }
             }
-
             messageElement.append(hourAuthorContainer, messageSpan, toolboxContainer);
             return messageElement;
         }
