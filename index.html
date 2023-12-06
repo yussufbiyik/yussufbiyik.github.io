@@ -173,6 +173,7 @@
         // Check if user previously wanted the chat to stop auto scrolling
         var autoScroll = localStorage.getItem("autoScroll") ?? "true";
         const chatMessagesElement = document.getElementById('chat-messages');
+        const userMessageInput = document.getElementById("message-input");
 
         const HTML_REGEX = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
         const LAST_SIX_DIGITS_REGEX = /\d{1,6}(?=[^\d]*$)/;
@@ -196,196 +197,8 @@
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
             loading="lazy">
         </iframe>`
-        // Following 2 functions return values that are CSS classes, these classes modify the look of the message.
-        const isKnownUser = (name) => {
-            switch (name) {
-                case "yusufbiyik":
-                    return "isAdmin"
-                case "server":
-                    return "isServer"
-            }
-        }
-        // Turns message createdAt(creation date) to HH:MM:SS format
-        // https://stackoverflow.com/a/19346583/9969425
-        const formatCreationDate = (docData) => {
-            const messageTime = new Date(docData.createdAt.seconds*1000).toTimeString().split(' ')[0];
-            return messageTime
-        }
 
-        // Creates message element
-        function generateMessageElement(docData, messageId) {
-            messageId = messageId ?? "";
-            const messageElement = document.createElement("div");
-            messageElement.classList.add("chat-message");
-            if(docData.isPinned === true) messageElement.classList.add("isPinned") 
-            messageElement.id = messageId;
-            // Hour, Author and Message
-            const [hourAuthorContainer, hourSpan, authorSpan, messageSpan, toolboxContainer] = [document.createElement("div"), document.createElement("span"), document.createElement("span"), document.createElement("span"), document.createElement("div")]
-            hourAuthorContainer.classList.add("hour-author-container");
-            hourSpan.classList.add("message-hour");
-            authorSpan.classList.add("message-author");
-            messageSpan.classList.add("message");
-            hourSpan.innerHTML = `[${formatCreationDate(docData)}]`;
-            authorSpan.innerHTML = `[<span class="${isKnownUser(docData.author)}">${docData.author}</span>]: `;
-            if(docData.message.match(TENOR_GIF_REGEX) != null) docData.message = docData.message.replace(TENOR_GIF_REGEX, `<img loading="lazy" alt="A gif sent by an user" src="${docData.message.match(TENOR_GIF_REGEX)[0]}">`);
-            if(docData.message.match(SPOTIFY_ID_REGEX) != null) docData.message = docData.message.replace(SPOTIFY_LINK_REGEX, SPOTIFY_IFRAME_TEMPLATE(docData.message.match(SPOTIFY_ID_REGEX)[0]));
-            messageSpan.innerHTML = docData.message;
-            hourAuthorContainer.append(hourSpan, authorSpan);
-            // Toolbox
-            toolboxContainer.classList.add("toolbox-container");
-            const [toolboxButtonReply, toolboxButtonId, toolboxButtonPin, toolboxButtonEdit, toolboxButtonDelete] = [document.createElement("button"), document.createElement("button"), document.createElement("button"), document.createElement("button"), document.createElement("button")]
-            toolboxButtonReply.setAttribute("title", "Reply")
-            toolboxButtonId.setAttribute("title", "Id")
-            toolboxButtonPin.setAttribute("title", "Pin")
-            toolboxButtonEdit.setAttribute("title", "Edit")
-            toolboxButtonDelete.setAttribute("title", "Delete")
-            toolboxButtonReply.onclick = () => {
-                userMessageInput.value = `[reply]${messageId}[/reply] yanıtın`;
-                userMessageInput.focus()
-            }
-            toolboxButtonId.onclick = () => {
-                navigator.clipboard.writeText(messageId ? messageId : "internal message");
-            }
-            toolboxButtonPin.onclick = () => {
-                commands.find(command => command.names.includes("pin")).execute([messageId])
-            }
-            toolboxButtonEdit.onclick = () => {
-                userMessageInput.value = `/edit ${messageId} ${docData.message}`
-                userMessageInput.focus()
-                userMessageInput.setSelectionRange(7+messageId.length,-1)
-            }
-            toolboxButtonDelete.onclick = () => {
-                commands.find(command => command.names.includes("delete")).execute([messageId])
-            }
-            toolboxButtonReply.classList.add("toolbox-button-reply");
-            toolboxButtonId.classList.add("toolbox-button-id");
-            toolboxButtonPin.classList.add("toolbox-button-pin");
-            toolboxButtonEdit.classList.add("toolbox-button-edit");
-            toolboxButtonDelete.classList.add("toolbox-button-delete");
-            toolboxContainer.append(toolboxButtonReply, toolboxButtonId, toolboxButtonPin, toolboxButtonEdit, toolboxButtonDelete);
-
-            messageElement.append(hourAuthorContainer, messageSpan, toolboxContainer);
-            return messageElement;
-        }
-        // Creates messages from the server 
-        // (yeah I know it's not actually from the server, but It looks better this way)
-        const serverMessageCreator = (message) => {
-            return {
-                author:"server",
-                message: message,
-                isPinned: true,
-                createdAt: Timestamp.fromDate(new Date())
-            }
-        }
-        // Get message count indicator tag
-        const messageCount = document.getElementById("message-count");
-        // Single funtion to send messages
-        async function sendMessage(messageElement, wordsOfMessage) {
-            chatMessagesElement.appendChild(messageElement);
-            const messageContent = messageElement.children[1].innerHTML;
-            // If message is a reply to another message
-            if(messageContent.match(REPLY_REGEX)) {
-                const REPLIED_MESSAGE_ID = messageContent.match(REPLY_REGEX)[1];
-                var repliedMessage = document.getElementById(REPLIED_MESSAGE_ID);
-                // If replied message is deleted
-                // get the message data from db and
-                // create it again
-                if(repliedMessage===null) {
-                    const repliedMessageRef = doc(cloudDatabase, "chat-messages", REPLIED_MESSAGE_ID);
-                    const repliedMessageSnap = await getDoc(repliedMessageRef);
-                    const repliedMessageData = repliedMessageSnap.data();
-                    chatMessagesElement.insertBefore(generateMessageElement(repliedMessageData, REPLIED_MESSAGE_ID), messageElement);
-                    repliedMessage = document.getElementById(REPLIED_MESSAGE_ID);
-                }
-                messageElement.children[1].innerHTML = messageElement.children[1].innerHTML.replace(messageContent.match(REPLY_REGEX)[0], 
-                `<a href="#${repliedMessage.id}" onclick="document.getElementById('${repliedMessage.id}').animate([
-                    {filter:'brightness(1)'},
-                    {filter:'brightness(5) invert(1)'},
-                    {filter:'brightness(1)'},
-                ], {
-                    duration:1000
-                })" class='reply'>Yanıtlanan mesajı gör</a>`);
-            }
-            // Some little code to give server side responses without bothering the database
-            // (it used to send this message to db to display for each user)
-            if(wordsOfMessage != undefined) {
-                if(wordsOfMessage.find(word => ["aw", "aww"].includes(word))) chatMessagesElement.appendChild(generateMessageElement(serverMessageCreator(BLITZ_HIMYM_GIF)));
-            }
-            messageCount.innerText = chatMessagesElement.childNodes.length;
-            if(autoScroll==="true") {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
-        }
-        // Get pinned messages
-        const pinnedQuerySnapshot = await getDocs(PINNED_MESSAGES_QUERY);
-        pinnedQuerySnapshot.forEach(doc => {
-            // Return if the message is sent in the last 6 hours
-            // There is no need to do it twice since unsubscribe will list it again
-            if(new Date(doc.data().createdAt.seconds*1000) >= msNow-21000000) return;
-            messages.push({docID: doc.id,data:doc.data()});
-            // Add the message to the message container
-            sendMessage(generateMessageElement(doc.data(), doc.id));
-        })
-        // Triggers when collection is changed whether by a new document or by an updated one
-        const unsubscribe = onSnapshot(MESSAGES_FROM_LAST_SIX_HOURS_QUERY, (querySnapshot) => {
-            // If messages were initally loaded, then there is no need to load all the messages again,
-            // so otherwise load only the changes,
-            // Following if statement does exactly that.
-            if(didMessagesLoad === false) {
-                querySnapshot.forEach((doc) => {
-                    messages.push({docID: doc.id,data:doc.data()});
-                    // Add the message to the message container
-                    sendMessage(generateMessageElement(doc.data(), doc.id), doc.data().message.split(" "));
-                });
-                didMessagesLoad = true;
-                // Send info messages
-                sendMessage(generateMessageElement(serverMessageCreator("/nick kullaniciadi şeklinde kullanıcı adını tanımlayabilirsin, kullanıcı adın: " + username)));
-                sendMessage(generateMessageElement(serverMessageCreator("You can set your username by using /nick username command, your username is: " + username)));
-                // Scroll to bottom
-                chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
-            }else {
-                querySnapshot.docChanges().forEach(change => {
-                    // Check the change type
-                    // Add the message if the change is add;
-                    // if not remove the message
-                    switch (change.type) {
-                        case "added":
-                            // Add the message to the messages array
-                            messages.push({docID: change.doc.id,data:change.doc.data()})
-                            // Add the message to the message container
-                            sendMessage(generateMessageElement(change.doc.data(), change.doc.id), change.doc.data().message.split(" "));
-                            break;
-                        case "modified":
-                            // Find the message from both the messages array and the html
-                            const modifiedMessageIndex = messages.findIndex(message => message.docID === change.doc.id);
-                            const modifiedMessageElement = document.getElementById(change.doc.id);
-                            // Assign old and new versions to a variable
-                            const newMessageData = change.doc.data()
-                            const oldMessageData = messages[modifiedMessageIndex].data;
-                            // Compare the old and new then modify the old data
-                            if(oldMessageData.isPinned != newMessageData.isPinned) {
-                                modifiedMessageElement.classList.toggle("isPinned")
-                            }
-                            if(oldMessageData.message != newMessageData.message) {
-                                Array.from(modifiedMessageElement.children).find(child => child.classList.contains("message")).innerHTML = newMessageData.message
-                            }
-                            messages[modifiedMessageIndex].data = change.doc.data()
-                            break;
-                        case "removed":
-                            // Find the message from both the messages array and the html
-                            // then delete them both
-                            const removedMessageIndex = messages.findIndex(message => message.id === change.doc.id);
-                            messages.splice(removedMessageIndex, 1);
-                            document.getElementById(change.doc.id).remove();
-                            break;
-                    }
-                })
-                // Scroll to bottom if the user is allowing you to
-                if(autoScroll==="true") {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
-            }
-            // Timer end
-            // const end = Date.now();
-            // console.log(end - start)
-        });
-
+        
         // I just didn't want to use a library to use md5
         // https://stackoverflow.com/a/33486055/9969425
         var MD5 = function(d){var r = M(V(Y(X(d),8*d.length)));return r.toLowerCase()};function M(d){for(var _,m="0123456789ABCDEF",f="",r=0;r<d.length;r++)_=d.charCodeAt(r),f+=m.charAt(_>>>4&15)+m.charAt(15&_);return f}function X(d){for(var _=Array(d.length>>2),m=0;m<_.length;m++)_[m]=0;for(m=0;m<8*d.length;m+=8)_[m>>5]|=(255&d.charCodeAt(m/8))<<m%32;return _}function V(d){for(var _="",m=0;m<32*d.length;m+=8)_+=String.fromCharCode(d[m>>5]>>>m%32&255);return _}function Y(d,_){d[_>>5]|=128<<_%32,d[14+(_+64>>>9<<4)]=_;for(var m=1732584193,f=-271733879,r=-1732584194,i=271733878,n=0;n<d.length;n+=16){var h=m,t=f,g=r,e=i;f=md5_ii(f=md5_ii(f=md5_ii(f=md5_ii(f=md5_hh(f=md5_hh(f=md5_hh(f=md5_hh(f=md5_gg(f=md5_gg(f=md5_gg(f=md5_gg(f=md5_ff(f=md5_ff(f=md5_ff(f=md5_ff(f,r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+0],7,-680876936),f,r,d[n+1],12,-389564586),m,f,d[n+2],17,606105819),i,m,d[n+3],22,-1044525330),r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+4],7,-176418897),f,r,d[n+5],12,1200080426),m,f,d[n+6],17,-1473231341),i,m,d[n+7],22,-45705983),r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+8],7,1770035416),f,r,d[n+9],12,-1958414417),m,f,d[n+10],17,-42063),i,m,d[n+11],22,-1990404162),r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+12],7,1804603682),f,r,d[n+13],12,-40341101),m,f,d[n+14],17,-1502002290),i,m,d[n+15],22,1236535329),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+1],5,-165796510),f,r,d[n+6],9,-1069501632),m,f,d[n+11],14,643717713),i,m,d[n+0],20,-373897302),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+5],5,-701558691),f,r,d[n+10],9,38016083),m,f,d[n+15],14,-660478335),i,m,d[n+4],20,-405537848),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+9],5,568446438),f,r,d[n+14],9,-1019803690),m,f,d[n+3],14,-187363961),i,m,d[n+8],20,1163531501),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+13],5,-1444681467),f,r,d[n+2],9,-51403784),m,f,d[n+7],14,1735328473),i,m,d[n+12],20,-1926607734),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+5],4,-378558),f,r,d[n+8],11,-2022574463),m,f,d[n+11],16,1839030562),i,m,d[n+14],23,-35309556),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+1],4,-1530992060),f,r,d[n+4],11,1272893353),m,f,d[n+7],16,-155497632),i,m,d[n+10],23,-1094730640),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+13],4,681279174),f,r,d[n+0],11,-358537222),m,f,d[n+3],16,-722521979),i,m,d[n+6],23,76029189),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+9],4,-640364487),f,r,d[n+12],11,-421815835),m,f,d[n+15],16,530742520),i,m,d[n+2],23,-995338651),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+0],6,-198630844),f,r,d[n+7],10,1126891415),m,f,d[n+14],15,-1416354905),i,m,d[n+5],21,-57434055),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+12],6,1700485571),f,r,d[n+3],10,-1894986606),m,f,d[n+10],15,-1051523),i,m,d[n+1],21,-2054922799),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+8],6,1873313359),f,r,d[n+15],10,-30611744),m,f,d[n+6],15,-1560198380),i,m,d[n+13],21,1309151649),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+4],6,-145523070),f,r,d[n+11],10,-1120210379),m,f,d[n+2],15,718787259),i,m,d[n+9],21,-343485551),m=safe_add(m,h),f=safe_add(f,t),r=safe_add(r,g),i=safe_add(i,e)}return Array(m,f,r,i)}function md5_cmn(d,_,m,f,r,i){return safe_add(bit_rol(safe_add(safe_add(_,d),safe_add(f,i)),r),m)}function md5_ff(d,_,m,f,r,i,n){return md5_cmn(_&m|~_&f,d,_,r,i,n)}function md5_gg(d,_,m,f,r,i,n){return md5_cmn(_&f|m&~f,d,_,r,i,n)}function md5_hh(d,_,m,f,r,i,n){return md5_cmn(_^m^f,d,_,r,i,n)}function md5_ii(d,_,m,f,r,i,n){return md5_cmn(m^(_|~f),d,_,r,i,n)}function safe_add(d,_){var m=(65535&d)+(65535&_);return(d>>16)+(_>>16)+(m>>16)<<16|65535&m}function bit_rol(d,_){return d<<_|d>>>32-_}
@@ -519,6 +332,208 @@
                 }
             }
         ]
+
+        // Following 2 functions return values that are CSS classes, these classes modify the look of the message.
+        const isKnownUser = (name) => {
+            switch (name) {
+                case "yusufbiyik":
+                    return "isAdmin"
+                case "server":
+                    return "isServer"
+            }
+        }
+        // Turns message createdAt(creation date) to HH:MM:SS format
+        // https://stackoverflow.com/a/19346583/9969425
+        const formatCreationDate = (docData) => {
+            const messageTime = new Date(docData.createdAt.seconds*1000).toTimeString().split(' ')[0];
+            return messageTime
+        }
+
+        // Creates message element
+        function generateMessageElement(docData, messageId) {
+            messageId = messageId ?? "";
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("chat-message");
+            if(docData.isPinned === true) messageElement.classList.add("isPinned") 
+            messageElement.id = messageId;
+            // Hour, Author and Message
+            const [hourAuthorContainer, hourSpan, authorSpan, messageSpan, toolboxContainer] = [document.createElement("div"), document.createElement("span"), document.createElement("span"), document.createElement("span"), document.createElement("div")]
+            hourAuthorContainer.classList.add("hour-author-container");
+            hourSpan.classList.add("message-hour");
+            authorSpan.classList.add("message-author");
+            messageSpan.classList.add("message");
+            hourSpan.innerHTML = `[${formatCreationDate(docData)}]`;
+            authorSpan.innerHTML = `[<span class="${isKnownUser(docData.author)}">${docData.author}</span>]: `;
+            if(docData.message.match(TENOR_GIF_REGEX) != null) docData.message = docData.message.replace(TENOR_GIF_REGEX, `<img loading="lazy" alt="A gif sent by an user" src="${docData.message.match(TENOR_GIF_REGEX)[0]}">`);
+            if(docData.message.match(SPOTIFY_ID_REGEX) != null) docData.message = docData.message.replace(SPOTIFY_LINK_REGEX, SPOTIFY_IFRAME_TEMPLATE(docData.message.match(SPOTIFY_ID_REGEX)[0]));
+            messageSpan.innerHTML = docData.message;
+            hourAuthorContainer.append(hourSpan, authorSpan);
+            // Toolbox
+            toolboxContainer.classList.add("toolbox-container");
+            const buttonNames = ["Reply", "Id", "Pin", "Edit", "Delete"];
+            // Loop through the button names and set the title attribute for each button
+            for (let name of buttonNames) {
+                const toolboxButton = document.createElement("button");
+                toolboxButton.id = `toolboxButton${name}`;
+                toolboxButton.classList.add(`toolbox-button-${name.toLowerCase()}`)
+                toolboxButton.setAttribute("title", name);
+                toolboxContainer.append(toolboxButton);
+                switch (name) {
+                    case "Reply":
+                        toolboxButton.onclick = () => {
+                            userMessageInput.value = `[reply]${messageId}[/reply] yanıtın`;
+                            userMessageInput.focus()
+                        }
+                        break;
+                    case "Id":
+                        toolboxButton.onclick = () => {
+                            navigator.clipboard.writeText(messageId ? messageId : "internal message");
+                        }
+                        break;
+                    case "Pin":
+                        toolboxButton.onclick = () => {
+                            commands.find(command => command.names.includes("pin")).execute([messageId]);
+                        }
+                        break;
+                    case "Edit":
+                        toolboxButton.onclick = () => {
+                            userMessageInput.value = `/edit ${messageId} ${docData.message}`
+                            userMessageInput.focus()
+                            userMessageInput.setSelectionRange(7+messageId.length,-1)
+                        }
+                        break;
+                    case "Delete":
+                        toolboxButton.onclick = () => {
+                            commands.find(command => command.names.includes("delete")).execute([messageId]);
+                        }
+                        break;
+                    default:
+                        console.error(`Unknown button name, toolboxButton${name}`)
+                        break;
+                }
+            }
+
+            messageElement.append(hourAuthorContainer, messageSpan, toolboxContainer);
+            return messageElement;
+        }
+        // Creates messages from the server 
+        // (yeah I know it's not actually from the server, but It looks better this way)
+        const serverMessageCreator = (message) => {
+            return {
+                author:"server",
+                message: message,
+                isPinned: true,
+                createdAt: Timestamp.fromDate(new Date())
+            }
+        }
+        // Get message count indicator tag
+        const messageCount = document.getElementById("message-count");
+        // Single funtion to send messages
+        async function sendMessage(messageElement, wordsOfMessage) {
+            chatMessagesElement.appendChild(messageElement);
+            const messageContent = messageElement.children[1].innerHTML;
+            // If message is a reply to another message
+            if(messageContent.match(REPLY_REGEX)) {
+                const REPLIED_MESSAGE_ID = messageContent.match(REPLY_REGEX)[1];
+                var repliedMessage = document.getElementById(REPLIED_MESSAGE_ID);
+                // If replied message is deleted
+                // get the message data from db and
+                // create it again
+                if(repliedMessage===null) {
+                    const repliedMessageRef = doc(cloudDatabase, "chat-messages", REPLIED_MESSAGE_ID);
+                    const repliedMessageSnap = await getDoc(repliedMessageRef);
+                    const repliedMessageData = repliedMessageSnap.data();
+                    chatMessagesElement.insertBefore(generateMessageElement(repliedMessageData, REPLIED_MESSAGE_ID), messageElement);
+                    repliedMessage = document.getElementById(REPLIED_MESSAGE_ID);
+                }
+                messageElement.children[1].innerHTML = messageElement.children[1].innerHTML.replace(messageContent.match(REPLY_REGEX)[0], 
+                `<a href="#${repliedMessage.id}" onclick="document.getElementById('${repliedMessage.id}').animate([
+                    {filter:'brightness(1)'},
+                    {filter:'brightness(5) invert(1)'},
+                    {filter:'brightness(1)'},
+                ], {
+                    duration:1000
+                })" class='reply'>Yanıtlanan mesajı gör</a>`);
+            }
+            // Some little code to give server side responses without bothering the database
+            // (it used to send this message to db to display for each user)
+            if(wordsOfMessage != undefined) {
+                if(wordsOfMessage.find(word => ["aw", "aww"].includes(word))) chatMessagesElement.appendChild(generateMessageElement(serverMessageCreator(BLITZ_HIMYM_GIF)));
+            }
+            messageCount.innerText = chatMessagesElement.childNodes.length;
+            if(autoScroll==="true") {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
+        }
+        // Get pinned messages
+        const pinnedQuerySnapshot = await getDocs(PINNED_MESSAGES_QUERY);
+        pinnedQuerySnapshot.forEach(doc => {
+            // Return if the message is sent in the last 6 hours
+            // There is no need to do it twice since unsubscribe will list it again
+            if(new Date(doc.data().createdAt.seconds*1000) >= msNow-21000000) return;
+            messages.push({docID: doc.id,data:doc.data()});
+            // Add the message to the message container
+            sendMessage(generateMessageElement(doc.data(), doc.id));
+        })
+        // Triggers when collection is changed whether by a new document or by an updated one
+        const unsubscribe = onSnapshot(MESSAGES_FROM_LAST_SIX_HOURS_QUERY, (querySnapshot) => {
+            // If messages were initally loaded, then there is no need to load all the messages again,
+            // so otherwise load only the changes,
+            // Following if statement does exactly that.
+            if(didMessagesLoad === false) {
+                querySnapshot.forEach((doc) => {
+                    messages.push({docID: doc.id,data:doc.data()});
+                    // Add the message to the message container
+                    sendMessage(generateMessageElement(doc.data(), doc.id), doc.data().message.split(" "));
+                });
+                didMessagesLoad = true;
+                // Send info messages
+                sendMessage(generateMessageElement(serverMessageCreator("/nick kullaniciadi şeklinde kullanıcı adını tanımlayabilirsin, kullanıcı adın: " + username)));
+                sendMessage(generateMessageElement(serverMessageCreator("You can set your username by using /nick username command, your username is: " + username)));
+                // Scroll to bottom
+                chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
+            }else {
+                querySnapshot.docChanges().forEach(change => {
+                    // Check the change type
+                    // Add the message if the change is add;
+                    // if not remove the message
+                    switch (change.type) {
+                        case "added":
+                            // Add the message to the messages array
+                            messages.push({docID: change.doc.id,data:change.doc.data()})
+                            // Add the message to the message container
+                            sendMessage(generateMessageElement(change.doc.data(), change.doc.id), change.doc.data().message.split(" "));
+                            break;
+                        case "modified":
+                            // Find the message from both the messages array and the html
+                            const modifiedMessageIndex = messages.findIndex(message => message.docID === change.doc.id);
+                            const modifiedMessageElement = document.getElementById(change.doc.id);
+                            // Assign old and new versions to a variable
+                            const newMessageData = change.doc.data()
+                            const oldMessageData = messages[modifiedMessageIndex].data;
+                            // Compare the old and new then modify the old data
+                            if(oldMessageData.isPinned != newMessageData.isPinned) {
+                                modifiedMessageElement.classList.toggle("isPinned")
+                            }
+                            if(oldMessageData.message != newMessageData.message) {
+                                Array.from(modifiedMessageElement.children).find(child => child.classList.contains("message")).innerHTML = newMessageData.message
+                            }
+                            messages[modifiedMessageIndex].data = change.doc.data()
+                            break;
+                        case "removed":
+                            // Find the message from both the messages array and the html
+                            // then delete them both
+                            const removedMessageIndex = messages.findIndex(message => message.id === change.doc.id);
+                            messages.splice(removedMessageIndex, 1);
+                            document.getElementById(change.doc.id).remove();
+                            break;
+                    }
+                })
+                // Scroll to bottom if the user is allowing you to
+                if(autoScroll==="true") {chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight}
+            }
+            // Timer end
+            // const end = Date.now();
+            // console.log(end - start)
+        });
         
         const expandChatControlButton = document.getElementById("chat-control-expand");
         expandChatControlButton.onclick = () => {commands.find(command => command.names[0] === "expand").execute()}
@@ -573,7 +588,7 @@
         }
 
         var latestUserMessage;
-        const userMessageInput = document.getElementById("message-input");
+        // const userMessageInput = document.getElementById("message-input");
         const messageSubmitButton = document.getElementById("message-submit-button");
         // Auto click the submit button if the key is enter
         userMessageInput.addEventListener("keydown", (event) => {
