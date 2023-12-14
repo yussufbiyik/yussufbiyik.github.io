@@ -182,6 +182,11 @@
         const BLITZ_HIMYM_GIF = `https://media.tenor.com/v5y8uoAvbzAAAAAC/aw-man-met.gif`;
 
         const TENOR_GIF_REGEX = /https:\/\/media\.tenor\.com\/.+\.gif/;
+        // Let's hope there are no problems with this regex
+        const GIF_REGEX = /https:\/\/.*\..+\..+\/.+\.gif/;
+        // Regex to match domain names
+        const DOMAIN_REGEX = /^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/;
+        const allowedGifSources = ["i.pinimg.com", "media.tenor.com", "media0.giphy.com", "media1.giphy.com", "media2.giphy.com"] // How many giphy links are there bruv?
 
         const SPOTIFY_LINK_REGEX = /(?:https?:\/\/(?:play|open)\.spotify\.com\/(playlist|track)\/[^?]+)(?:\?.*)?/gm;
         const SPOTIFY_ID_REGEX = /(playlist|track)\/([^?]+)/gm;
@@ -227,7 +232,7 @@
             messageSpan.classList.add("message");
             hourSpan.innerHTML = `[${formatCreationDate(docData)}]`;
             authorSpan.innerHTML = `[<span class="${isKnownUser(docData.author)}">${docData.author}</span>]: `;
-            if(docData.message.match(TENOR_GIF_REGEX) != null) docData.message = docData.message.replace(TENOR_GIF_REGEX, `<img loading="lazy" alt="A gif sent by an user" src="${docData.message.match(TENOR_GIF_REGEX)[0]}">`);
+            if(docData.message.match(GIF_REGEX) != null && allowedGifSources.includes(docData.message.match(DOMAIN_REGEX)[3])) docData.message = docData.message.replace(GIF_REGEX, `<img loading="lazy" alt="A gif sent by an user" src="${docData.message.match(GIF_REGEX)[0]}">`);
             if(docData.message.match(SPOTIFY_ID_REGEX) != null) docData.message = docData.message.replace(SPOTIFY_LINK_REGEX, SPOTIFY_IFRAME_TEMPLATE(docData.message.match(SPOTIFY_ID_REGEX)[0]));
             messageSpan.innerHTML = docData.message;
             hourAuthorContainer.append(hourSpan, authorSpan);
