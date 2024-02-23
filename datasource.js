@@ -128,10 +128,11 @@ const pages = [
                                 </li>
                             </ul>
                         </li>
+                        <li>C# (In Progress)</li>
                         <li>Python</li>
                         <li>Arduino</li>
                         <li>Firebase</li>
-                        <li>SQL</li>
+                        <li>PHP, PDO, SQL</li>
                     </ul>
                 </div>
                 <div id="general-skills" class="skill">
@@ -141,6 +142,8 @@ const pages = [
                             <ul>
                                 <li>Cinema 4D (Modelleme ve Animasyon)</li>
                                 <li>Tinkercad</li>
+                                <li>Fusion360 (Basics)</li>
+                                <li>AutoCAD (In progress)</li>
                             </ul>
                         </li>
                         <li>
