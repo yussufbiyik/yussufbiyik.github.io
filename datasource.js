@@ -128,7 +128,7 @@ const pages = [
                                 </li>
                             </ul>
                         </li>
-                        <li>C# (In Progress)</li>
+                        <li>C#</li>
                         <li>Python</li>
                         <li>Arduino</li>
                         <li>Firebase</li>
@@ -143,7 +143,7 @@ const pages = [
                                 <li>Cinema 4D (Modelleme ve Animasyon)</li>
                                 <li>Tinkercad</li>
                                 <li>Fusion360 (Basics)</li>
-                                <li>AutoCAD (In progress)</li>
+                                <li>AutoCAD</li>
                             </ul>
                         </li>
                         <li>
