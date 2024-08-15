@@ -114,7 +114,7 @@ const pages = [
                 <div id="software-related" class="skill">
                     <ul>
                         <li>
-                            <span>Web Geliştirme // Web Development</span>
+                            <span>Yazılım Geliştirme // Software Development</span>
                             <ul>
                                 <li>
                                     <span>HTML & CSS</span>
