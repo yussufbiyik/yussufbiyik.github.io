@@ -124,7 +124,7 @@ const pages = [
                             <ul>
                                 <li>
                                     <span>Javascript & Typescript</span>
-                                    <ul>NodeJS, Angular, Electron, React Native</ul>
+                                    <ul>NodeJS, Angular, Express, Electron, React Native...</ul>
                                 </li>
                             </ul>
                         </li>
